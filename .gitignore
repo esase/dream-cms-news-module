@@ -3,4 +3,11 @@
 !/module
 /module/*
 !/module/News
+!/public_html
+/public_html/*
+!/public_html/layout
+/public_html/layout/*
+!/public_html/layout/base
+/public_html/layout/base/*
+!/public_html/layout/base/news
 !/releases
