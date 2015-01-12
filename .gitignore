@@ -1,0 +1,6 @@
+/*
+!.gitignore
+!/module
+/module/*
+!/module/News
+!news_1.0.0.zip
