@@ -1,0 +1,80 @@
+<?php $this->declareVars('subPageTitle', 'content') ?>
+<?php $this->subPageTitle = $this->translate('List of categories') ?>
+<?php $this->headTitle($this->subPageTitle) ?>
+
+<!-- render a header -->
+<?php echo $this->render('news/news-administration/_header') ?>
+
+<!-- render tabs -->
+<?php echo $this->partial('administration-partial/tab', [
+    'tabs' => $this->baseTabs,
+    'active' => 'list-categories' // selected action is the "list categories"
+]) ?>
+
+<?php $this->content = $this->partial('partial/data-grid', [
+    'controller' => 'news-administration',
+    'action' => 'list-categories',
+    'order_by' => $this->order_by,
+    'order_type' => $this->order_type,
+    'per_page' => $this->per_page,
+    'default_order' => 'id',
+    'default_order_type' => 'desc',
+    'headers' => [
+        0 => [
+            'title' => $this->translate('ID'),
+            'order_name' => 'id'
+        ],
+        1 => [
+            'title' => $this->translate('Category name'),
+            'order_name' => 'name'
+        ]
+    ],
+    'paginator' => $this->paginator,
+    'helpers' => [
+    ],
+    'helpers_options' => [
+    ],
+    'actions' => [
+        'regular_actions' => [
+            0 => [
+                'name' => $this->translate('Add a category'),
+                'controller' => 'news-administration',
+                'action' => 'add-category',
+                'check_acl' => true
+            ]
+        ],
+        'multiple_actions' => [
+            0 => [
+                'name' => $this->translate('Delete selected'),
+                'controller' => 'news-administration',
+                'action' => 'delete-categories',
+                'check_acl' => true,
+                'confirm' => $this->translate('Selected news categories will be deleted. Are you sure?')
+            ]
+        ],
+        'single_actions' => [
+            0 => [
+                'name' => $this->translate('Edit the category'),
+                'controller' => 'news-administration',
+                'action' => 'edit-category',
+                'check_acl' => true,
+                'image' => $this->layoutAsset('icon/edit_action.png', 'image')
+            ]
+        ]
+    ],
+    'actions_options' => [
+        'action_identity' => 'id',
+        'form_name' => 'news-categories',
+        'multiple_actions' => [
+            'items_name' => 'categories[]'
+        ]
+    ],
+    'actions_extra_check' => [
+    ]
+]) ?>
+
+<!-- render a data grid -->
+<?php echo $this->partial('administration-partial/panel', [
+    'title' => $this->translate('News categories'),
+    'body' => $this->content
+]) ?>

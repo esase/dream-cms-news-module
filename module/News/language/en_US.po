@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dream CMS \"news\" module\n"
 "POT-Creation-Date: 2013-07-19 11:59+0600\n"
-"PO-Revision-Date: 2015-01-12 16:32+0600\n"
+"PO-Revision-Date: 2015-01-12 19:56+0600\n"
 "Last-Translator: AlexE <alexermashev@gmail.com>\n"
 "Language-Team: \n"
 "Language: English\n"
@@ -15,8 +15,95 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "Category will be deleted. Are you sure?"
+msgstr "Category will be deleted. Are you sure?"
+
+msgid "Delete the category"
+msgstr "Delete the category"
+
+msgid "Category has been edited"
+msgstr "Category has been edited"
+
+msgid "The selected category has been deleted"
+msgstr "The selected category has been deleted"
+
+msgid "Selected categories have been deleted"
+msgstr "Selected categories have been deleted"
+
+msgid "Category has been added"
+msgstr "Category has been added"
+
+msgid "Category already exists"
+msgstr "Category already exists"
+
+msgid "News categories"
+msgstr "News categories"
+
+msgid "Edit the category"
+msgstr "Edit the category"
+
+msgid "Selected news categories will be deleted. Are you sure?"
+msgstr "Selected news categories will be deleted. Are you sure?"
+
+msgid "Add a category"
+msgstr "Add a category"
+
+msgid "Category name"
+msgstr "Category name"
+
+msgid "List of categories"
+msgstr "List of categories"
+
+msgid "List of news"
+msgstr "List of news"
+
 msgid "News"
 msgstr "News"
 
 msgid "Module allows to publish news on the site"
 msgstr "Module allows to publish news on the site"
+
+msgid "Event - Editing news categories"
+msgstr "Editing news categories"
+
+msgid "Event - News category edited by guest"
+msgstr "Guest edited the news category with id - \"%d\""
+
+msgid "Event - News category edited by user"
+msgstr "\"%s\" edited the news category with id - \"%d\""
+
+msgid "Event - Adding news categories"
+msgstr "Adding news categories"
+
+msgid "Event - News category added by guest"
+msgstr "Guest added the news category with id - \"%d\""
+
+msgid "Event - News category added by user"
+msgstr "\"%s\" added the news category with id - \"%d\""
+
+msgid "Event - Deleting news categories"
+msgstr "Deleting news categories"
+
+msgid "Event - News category deleted by guest"
+msgstr "Guest deleted the news category with id - \"%d\""
+
+msgid "Event - News category deleted by user"
+msgstr "\"%s\" deleted the news category with id - \"%d\""
+
+msgid "ACL - Viewing news in admin area"
+msgstr "Viewing news in admin area"
+
+msgid "ACL - Viewing news categories in admin area"
+msgstr "Viewing news categories in admin area"
+
+msgid "ACL - Editing news settings in admin area"
+msgstr "Editing news settings in admin area"
+
+msgid "ACL - Adding news categories in admin area"
+msgstr "Adding news categories in admin area"
+
+msgid "ACL - Deleting news categories in admin area"
+msgstr "Deleting news categories in admin area"
+
+msgid "ACL - Editing news categories in admin area"
+msgstr "Editing news categories in admin area"

@@ -14,6 +14,19 @@ INSERT INTO `application_admin_menu` (`name`, `controller`, `action`, `module`, 
 ('List of categories', 'news-administration', 'list-categories', @moduleId, @maxOrder + 1, @menuCategoryId, @menuPartId),
 ('Settings', 'news-administration', 'settings', @moduleId, @maxOrder + 2, @menuCategoryId, @menuPartId);
 
+INSERT INTO `acl_resource` (`resource`, `description`, `module`) VALUES
+('news_administration_list', 'ACL - Viewing news in admin area', @moduleId),
+('news_administration_list_categories', 'ACL - Viewing news categories in admin area', @moduleId),
+('news_administration_settings', 'ACL - Editing news settings in admin area', @moduleId),
+('news_administration_add_category', 'ACL - Adding news categories in admin area', @moduleId),
+('news_administration_delete_categories', 'ACL - Deleting news categories in admin area', @moduleId),
+('news_administration_edit_category', 'ACL - Editing news categories in admin area', @moduleId);
+
+INSERT INTO `application_event` (`name`, `module`, `description`) VALUES
+('news_add_category', @moduleId, 'Event - Adding news categories'),
+('news_delete_category', @moduleId, 'Event - Deleting news categories'),
+('news_edit_category', @moduleId, 'Event - Editing news categories');
+
 CREATE TABLE IF NOT EXISTS `news_category` (
     `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(50) NOT NULL,

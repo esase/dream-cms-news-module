@@ -1,0 +1,77 @@
+<?php $this->declareVars('extraActions', 'subPageTitle') ?>
+<?php $this->subPageTitle = $this->translate('Edit the category') ?>
+<?php $this->headTitle($this->subPageTitle) ?>
+<?php $this->headTitle($this->translate('List of categories')) ?>
+
+<!-- render a header -->
+<?php echo $this->render('news/news-administration/_header') ?>
+
+<!-- render tabs -->
+<?php echo $this->partial('administration-partial/tab', [
+    'tabs' => $this->baseTabs,
+    'active' => 'list-categories' // selected action is the "list categories"
+]) ?>
+
+<!-- render a breadcrumb -->
+<?php echo $this->partial('administration-partial/breadcrumb', [
+    'pages' => [
+        'list' => [
+            'name' => $this->translate('List of categories'),
+            'controller' => 'news-administration',
+            'action' => 'list-categories',
+            'check_acl' => true
+        ],
+        'edit_category' => [
+            'name' => $this->subPageTitle,
+            'controller' => 'news-administration',
+            'action' => 'edit-category',
+            'check_acl' => true
+        ]
+    ]
+]) ?>
+
+<?php $this->extraActions = trim($this->partial('administration-partial/extra-actions', ['pages' => [
+    [
+        'controller' => 'news-administration',
+        'action' => 'delete-categories',
+        'name' => $this->translate('Delete the category'),
+        'check_acl' => true,
+        'confirm' => $this->translate('Category will be deleted. Are you sure?'),
+        'confirm_callback' => "function(link) { $.post($(link).attr('href'), {'categories' : [{$this->category['id']}]}, function(){location.href='{$this->url('application/page', ['controller' => 'news-administration', 'action' => 'list-categories'], ['force_canonical' => true])}'}) }"
+    ],
+    [
+        'controller' => 'news-administration',
+        'action' => 'add-category',
+        'name' => $this->translate('Add a category'),
+        'check_acl' => true
+    ]]
+]))
+?>
+
+<!-- notification -->
+<?php echo $this->partial('partial/notification') ?>
+
+<div class="row">
+    <?php if ($this->extraActions): ?>
+        <div class="col-md-4">
+            <?php echo $this->extraActions ?>
+        </div>
+        <div class="col-md-8">
+            <!-- render a form -->
+            <?php echo $this->partial('administration-partial/panel', [
+                'notification' => false,
+                'title' => $this->translate('General info'),
+                'body' => $this->partial('partial/form', ['form' => $this->category_form])
+            ]) ?>
+        </div>
+    <?php else: ?>
+        <div class="col-md-12">
+            <!-- render a form -->
+            <?php echo $this->partial('administration-partial/panel', [
+                'notification' => false,
+                'title' => $this->translate('General info'),
+                'body' => $this->partial('partial/form', ['form' => $this->category_form])
+            ]) ?>
+        </div>
+    <?php endif ?>
+</div>
