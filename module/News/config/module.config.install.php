@@ -17,7 +17,7 @@ return [
     'module_depends' => [
     ],
     'clear_caches' => [
-        'setting'       => false,
+        'setting'       => true,
         'time_zone'     => false,
         'admin_menu'    => true,
         'js_cache'      => false,
@@ -29,6 +29,14 @@ return [
         'xmlrpc'        => false
     ],
     'resources' => [
+        [
+            'dir_name' => 'news',
+            'is_public' => true
+        ],
+        [
+            'dir_name' => 'news/thumbnail',
+            'is_public' => true
+        ]
     ],
     'install_sql' => __DIR__ . '/../install/install.sql',
     'install_intro' => null,

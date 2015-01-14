@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dream CMS \"news\" module\n"
 "POT-Creation-Date: 2013-07-19 11:59+0600\n"
-"PO-Revision-Date: 2015-01-12 19:56+0600\n"
+"PO-Revision-Date: 2015-01-14 15:28+0600\n"
 "Last-Translator: AlexE <alexermashev@gmail.com>\n"
 "Language-Team: \n"
 "Language: English\n"
@@ -14,6 +14,51 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Image uploading failed"
+msgstr "Image uploading failed"
+
+msgid "Image deleting failed"
+msgstr "Image deleting failed"
+
+msgid "News images"
+msgstr "News images"
+
+msgid "News thumbnail height"
+msgstr "News thumbnail height"
+
+msgid "News thumbnail width"
+msgstr "News thumbnail width"
+
+msgid "News image height"
+msgstr "News image height"
+
+msgid "News image width"
+msgstr "News image width"
+
+msgid "News date format"
+msgstr "News date format"
+
+msgid "Default new news are active"
+msgstr "Default new news are active"
+
+msgid "News has been added"
+msgstr "News has been added"
+
+msgid "Categories"
+msgstr "Categories"
+
+msgid "Text"
+msgstr "Text"
+
+msgid "Intro"
+msgstr "Intro"
+
+msgid "New news"
+msgstr "New news"
+
+msgid "Add a news"
+msgstr "Add a news"
 
 msgid "Category will be deleted. Are you sure?"
 msgstr "Category will be deleted. Are you sure?"
@@ -63,6 +108,15 @@ msgstr "News"
 msgid "Module allows to publish news on the site"
 msgstr "Module allows to publish news on the site"
 
+msgid "Event - Adding news"
+msgstr "Adding news"
+
+msgid "Event - News added by guest"
+msgstr "Guest added the news with id - \"%d\""
+
+msgid "Event - News added by user"
+msgstr "\"%s\" added the news with id - \"%d\""
+
 msgid "Event - Editing news categories"
 msgstr "Editing news categories"
 
@@ -107,3 +161,6 @@ msgstr "Deleting news categories in admin area"
 
 msgid "ACL - Editing news categories in admin area"
 msgstr "Editing news categories in admin area"
+
+msgid "ACL - Adding news in admin area"
+msgstr "Adding news in admin area"

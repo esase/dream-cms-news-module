@@ -22,6 +22,32 @@ class NewsEvent extends ApplicationAbstractEvent
     const EDIT_CATEGORY = 'news_edit_category';
 
     /**
+     * Add news event
+     */
+    const ADD_NEWS = 'news_add';
+
+    /**
+     * Fire add news event
+     *
+     * @param integer $newsId
+     * @return void
+     */
+    public static function fireAddNewsEvent($newsId)
+    {
+        // event's description
+        $eventDesc = UserIdentityService::isGuest()
+            ? 'Event - News added by guest'
+            : 'Event - News added by user';
+
+        $eventDescParams = UserIdentityService::isGuest()
+            ? [$newsId]
+            : [UserIdentityService::getCurrentUserIdentity()['nick_name'], $newsId];
+
+        self::fireEvent(self::ADD_NEWS, 
+                $newsId, UserIdentityService::getCurrentUserIdentity()['user_id'], $eventDesc, $eventDescParams);
+    }
+
+    /**
      * Fire edit category event
      *
      * @param integer $categoryId

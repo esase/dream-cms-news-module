@@ -10,3 +10,9 @@
     'tabs' => $this->baseTabs,
     'active' => 'settings' // selected action is the "settings"
 ]) ?>
+
+<!-- render a form -->
+<?php echo $this->partial('administration-partial/panel', [
+    'title' => $this->translate('Settings'),
+    'body' => $this->partial('partial/form', ['form' => $this->settings_form])
+]) ?>

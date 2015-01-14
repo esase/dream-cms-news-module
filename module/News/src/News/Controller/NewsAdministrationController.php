@@ -40,6 +40,85 @@ class NewsAdministrationController extends ApplicationAbstractAdministrationCont
      */
     public function listAction()
     {
+        // check the permission and increase permission's actions track
+        if (true !== ($result = $this->aclCheckPermission())) {
+            return $result;
+        }
+
+        $request = $this->getRequest();
+
+        // get data
+        $paginator = $this->getModel()->getNews($this->getPage(),
+                $this->getPerPage(), $this->getOrderBy(), $this->getOrderType());
+
+        return new ViewModel([
+            'paginator' => $paginator,
+            'order_by' => $this->getOrderBy(),
+            'order_type' => $this->getOrderType(),
+            'per_page' => $this->getPerPage()
+        ]);
+    }
+
+    /**
+     * Add a news action
+     */
+    public function addNewsAction()
+    {
+        // TODO: Check ACL +
+        // TODO: Fire event +
+        // TODO: ADD settings: auto news activate +
+        // TODO: ADD settings: news date format +
+        // TODO: ADD settings: images size +
+        // TODO: ADD uploader of images
+        
+
+        // get a news form
+        $newsForm = $this->getServiceLocator()
+            ->get('Application\Form\FormManager')
+            ->getInstance('News\Form\News')
+            ->setModel($this->getModel());
+
+        $request  = $this->getRequest();
+
+        // validate the form
+        if ($request->isPost()) {
+            // make certain to merge the files info!
+            $post = array_merge_recursive(
+                $request->getPost()->toArray(),
+                $request->getFiles()->toArray()
+            );
+
+            // fill the form with received values
+            $newsForm->getForm()->setData($post, false);
+
+            // save data
+            if ($newsForm->getForm()->isValid()) {
+                // check the permission and increase permission's actions track
+                if (true !== ($result = $this->aclCheckPermission())) {
+                    return $result;
+                }
+
+                // add a news
+                if (true === ($result = $this->getModel()->addNews($newsForm->
+                        getForm()->getData(), $this->params()->fromPost('categories'), $this->params()->fromFiles('image')))) {
+
+                    $this->flashMessenger()
+                        ->setNamespace('success')
+                        ->addMessage($this->getTranslator()->translate('News has been added'));
+                }
+                else {
+                    $this->flashMessenger()
+                        ->setNamespace('error')
+                        ->addMessage($this->getTranslator()->translate($result));
+                }
+
+                return $this->redirectTo('news-administration', 'add-news');
+            }
+        }
+
+        return new ViewModel([
+            'news_form' => $newsForm->getForm()
+        ]);
     }
 
     /**
@@ -232,5 +311,8 @@ class NewsAdministrationController extends ApplicationAbstractAdministrationCont
      */
     public function settingsAction()
     {
+        return new ViewModel([
+            'settings_form' => parent::settingsForm('news', 'news-administration', 'settings')
+        ]);
     }
 }

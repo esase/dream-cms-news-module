@@ -20,12 +20,70 @@ INSERT INTO `acl_resource` (`resource`, `description`, `module`) VALUES
 ('news_administration_settings', 'ACL - Editing news settings in admin area', @moduleId),
 ('news_administration_add_category', 'ACL - Adding news categories in admin area', @moduleId),
 ('news_administration_delete_categories', 'ACL - Deleting news categories in admin area', @moduleId),
-('news_administration_edit_category', 'ACL - Editing news categories in admin area', @moduleId);
+('news_administration_edit_category', 'ACL - Editing news categories in admin area', @moduleId),
+('news_administration_add_news', 'ACL - Adding news in admin area', @moduleId);
 
 INSERT INTO `application_event` (`name`, `module`, `description`) VALUES
 ('news_add_category', @moduleId, 'Event - Adding news categories'),
 ('news_delete_category', @moduleId, 'Event - Deleting news categories'),
-('news_edit_category', @moduleId, 'Event - Editing news categories');
+('news_edit_category', @moduleId, 'Event - Editing news categories'),
+('news_add', @moduleId, 'Event - Adding news');
+
+INSERT INTO `application_setting_category` (`name`, `module`) VALUES
+('Main settings', @moduleId);
+SET @settingsCategoryId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `application_setting` (`name`, `label`, `description`, `type`, `required`, `order`, `category`, `module`, `language_sensitive`, `values_provider`, `check`, `check_message`) VALUES
+('news_auto_confirm', 'Default new news are active', NULL, 'checkbox', NULL, 1, @settingsCategoryId, @moduleId, 1, NULL, NULL, NULL);
+SET @settingId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `application_setting_value` (`setting_id`, `value`, `language`) VALUES
+(@settingId, '1', NULL);
+
+INSERT INTO `application_setting` (`name`, `label`, `description`, `type`, `required`, `order`, `category`, `module`, `language_sensitive`, `values_provider`, `check`, `check_message`) VALUES
+('news_date_format', 'News date format', NULL, 'select', 1, 2, @settingsCategoryId, @moduleId, 1, NULL, NULL, NULL);
+SET @settingId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `application_setting_value` (`setting_id`, `value`, `language`) VALUES
+(@settingId, 'short', NULL);
+
+INSERT INTO `application_setting_predefined_value` (`setting_id`, `value`) VALUES
+(@settingId, 'full'),
+(@settingId, 'long'),
+(@settingId, 'medium'),
+(@settingId, 'short');
+
+INSERT INTO `application_setting_category` (`name`, `module`) VALUES
+('News images', @moduleId);
+SET @settingsCategoryId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `application_setting` (`name`, `label`, `description`, `type`, `required`, `order`, `category`, `module`, `language_sensitive`, `values_provider`, `check`, `check_message`) VALUES
+('news_image_width', 'News image width', NULL, 'integer', 1, 3, @settingsCategoryId, @moduleId, NULL, NULL, 'return intval(''__value__'') > 0;', 'Value should be greater than 0');
+SET @settingId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `application_setting_value` (`setting_id`, `value`, `language`) VALUES
+(@settingId, '200', NULL);
+
+INSERT INTO `application_setting` (`name`, `label`, `description`, `type`, `required`, `order`, `category`, `module`, `language_sensitive`, `values_provider`, `check`, `check_message`) VALUES
+('news_image_height', 'News image height', NULL, 'integer', 1, 4, @settingsCategoryId, @moduleId, NULL, NULL, 'return intval(''__value__'') > 0;', 'Value should be greater than 0');
+SET @settingId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `application_setting_value` (`setting_id`, `value`, `language`) VALUES
+(@settingId, '200', NULL);
+
+INSERT INTO `application_setting` (`name`, `label`, `description`, `type`, `required`, `order`, `category`, `module`, `language_sensitive`, `values_provider`, `check`, `check_message`) VALUES
+('news_thumbnail_width', 'News thumbnail width', NULL, 'integer', 1, 4, @settingsCategoryId, @moduleId, NULL, NULL, 'return intval(''__value__'') > 0;', 'Value should be greater than 0');
+SET @settingId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `application_setting_value` (`setting_id`, `value`, `language`) VALUES
+(@settingId, '64', NULL);
+
+INSERT INTO `application_setting` (`name`, `label`, `description`, `type`, `required`, `order`, `category`, `module`, `language_sensitive`, `values_provider`, `check`, `check_message`) VALUES
+('news_thumbnail_height', 'News thumbnail height', NULL, 'integer', 1, 5, @settingsCategoryId, @moduleId, NULL, NULL, 'return intval(''__value__'') > 0;', 'Value should be greater than 0');
+SET @settingId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `application_setting_value` (`setting_id`, `value`, `language`) VALUES
+(@settingId, '64', NULL);
 
 CREATE TABLE IF NOT EXISTS `news_category` (
     `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
