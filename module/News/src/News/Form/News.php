@@ -177,17 +177,16 @@ class News extends ApplicationAbstractCustomForm
 
             // get categories
             $categories = NewsService::getAllNewsCategories();
+            $this->formElements['categories']['values'] = $categories;
+
             if (!$categories) {
                 unset($this->formElements['categories']);
-            }
-            else {
-                $this->formElements['categories']['values'] = $categories;
             }
 
             // add preview for the image
             if ($this->newsImage) {
-                $this->formElements['avatar']['extra_options']['preview'] = true;
-                $this->formElements['avatar']['extra_options']['file_url'] =
+                $this->formElements['image']['extra_options']['preview'] = true;
+                $this->formElements['image']['extra_options']['file_url'] =
                         ApplicationService::getResourcesUrl() . NewsBaseModel::getThumbnailsDir() . $this->newsImage;
             }
 

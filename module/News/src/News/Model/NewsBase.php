@@ -1,6 +1,7 @@
 <?php
 namespace News\Model;
 
+use Application\Utility\ApplicationFileSystem as FileSystemUtility;
 use Application\Model\ApplicationAbstractBase;
 use Zend\Db\ResultSet\ResultSet;
 
@@ -9,7 +10,7 @@ class NewsBase extends ApplicationAbstractBase
     /**
      * News slug lengh
      */
-    const NEWS_SLUG_LENGTH = 40;
+    const NEWS_SLUG_LENGTH = 80;
 
     /**
      * Approved status
@@ -54,12 +55,12 @@ class NewsBase extends ApplicationAbstractBase
     }
 
     /**
-     * Delete an news' image
+     * Delete an news's image
      *
      * @param string $imageName
      * @return boolean
      */
-    protected function deletNewsImage($imageName)
+    protected function deleteNewsImage($imageName)
     {
         $imageTypes = [
             self::$thumbnailsDir,
@@ -137,5 +138,66 @@ class NewsBase extends ApplicationAbstractBase
         $result = $statement->execute();
 
         return $result->current();
+    }
+
+    /**
+     * Get news info
+     *
+     * @param integer $id
+     * @param boolean $currentLanguage
+     * @param boolean $categories
+     * @return array
+     */
+    public function getNewsInfo($id, $currentLanguage = true, $categories = false)
+    {
+        $select = $this->select();
+        $select->from('news_list')
+            ->columns([
+                'id',
+                'title',
+                'slug',
+                'intro',
+                'text',
+                'status',
+                'image',
+                'meta_description',
+                'meta_keywords',
+                'created',
+                'language',
+                'date_edited'
+            ])
+            ->where([
+                'id' => $id
+            ]);
+
+        if ($currentLanguage) {
+            $select->where([
+                'language' => $this->getCurrentLanguage()
+            ]);
+        }
+
+        $statement = $this->prepareStatementForSqlObject($select);
+        $result = $statement->execute();
+
+        // get categories
+        if (null != ($news = $result->current()) && $categories) {
+            $select = $this->select();
+            $select->from('news_category_connection')
+                ->columns([
+                    'category_id'
+                ])
+                ->where([
+                    'news_id' => $news['id']
+                ]);
+
+            $statement = $this->prepareStatementForSqlObject($select);
+            $result = $statement->execute();
+
+            foreach($result as $category) {
+                $news['categories'][] = $category['category_id'];
+            }
+        }
+
+        return $news;
     }
 }

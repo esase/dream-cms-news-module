@@ -20,20 +20,21 @@
     'per_page' => $this->per_page,
     'default_order' => 'id',
     'default_order_type' => 'desc',
+    'filter_form' => $this->filter_form,
     'headers' => [
-        0 => [
+        [
             'title' => $this->translate('ID'),
             'order_name' => 'id'
         ],
-        1 => [
+        [
             'title' => $this->translate('Title'),
             'order_name' => 'title'
         ],
-        2 => [
+        [
             'title' => $this->translate('Status'),
             'order_name' => 'status'
         ],
-        3 => [
+        [
             'title' => $this->translate('Date'),
             'order_name' => 'created'
         ]
@@ -50,11 +51,41 @@
     ],
     'actions' => [
         'regular_actions' => [
-            0 => [
+            [
                 'name' => $this->translate('Add a news'),
                 'controller' => 'news-administration',
                 'action' => 'add-news',
                 'check_acl' => true
+            ]
+        ],
+        'multiple_actions' => [
+            [
+                'name' => $this->translate('Approve selected'),
+                'controller' => 'news-administration',
+                'action' => 'approve-news',
+                'check_acl' => true
+            ],
+            [
+                'name' => $this->translate('Disapprove selected'),
+                'controller' => 'news-administration',
+                'action' => 'disapprove-news',
+                'check_acl' => true
+            ],
+            [
+                'name' => $this->translate('Delete selected'),
+                'controller' => 'news-administration',
+                'action' => 'delete-news',
+                'check_acl' => true,
+                'confirm' => $this->translate('Selected news will be deleted. Are you sure?')
+            ]
+        ],
+        'single_actions' => [
+            [
+                'name' => $this->translate('Edit the news'),
+                'controller' => 'news-administration',
+                'action' => 'edit-news',
+                'check_acl' => true,
+                'image' => $this->layoutAsset('icon/edit_action.png', 'image')
             ]
         ]
     ],

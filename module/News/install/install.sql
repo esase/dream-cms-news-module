@@ -21,20 +21,28 @@ INSERT INTO `acl_resource` (`resource`, `description`, `module`) VALUES
 ('news_administration_add_category', 'ACL - Adding news categories in admin area', @moduleId),
 ('news_administration_delete_categories', 'ACL - Deleting news categories in admin area', @moduleId),
 ('news_administration_edit_category', 'ACL - Editing news categories in admin area', @moduleId),
-('news_administration_add_news', 'ACL - Adding news in admin area', @moduleId);
+('news_administration_add_news', 'ACL - Adding news in admin area', @moduleId),
+('news_administration_edit_news', 'ACL - Editing news in admin area', @moduleId),
+('news_administration_delete_news', 'ACL - Deleting news in admin area', @moduleId),
+('news_administration_approve_news', 'ACL - Approving news in admin area', @moduleId),
+('news_administration_disapprove_news', 'ACL - Disapproving news in admin area', @moduleId);
 
 INSERT INTO `application_event` (`name`, `module`, `description`) VALUES
 ('news_add_category', @moduleId, 'Event - Adding news categories'),
 ('news_delete_category', @moduleId, 'Event - Deleting news categories'),
 ('news_edit_category', @moduleId, 'Event - Editing news categories'),
-('news_add', @moduleId, 'Event - Adding news');
+('news_add', @moduleId, 'Event - Adding news'),
+('news_edit', @moduleId, 'Event - Editing news'),
+('news_delete', @moduleId, 'Event - Deleting news'),
+('news_approve', @moduleId, 'Event - Approving news'),
+('news_disapprove', @moduleId, 'Event - Disapproving news');
 
 INSERT INTO `application_setting_category` (`name`, `module`) VALUES
 ('Main settings', @moduleId);
 SET @settingsCategoryId = (SELECT LAST_INSERT_ID());
 
 INSERT INTO `application_setting` (`name`, `label`, `description`, `type`, `required`, `order`, `category`, `module`, `language_sensitive`, `values_provider`, `check`, `check_message`) VALUES
-('news_auto_confirm', 'Default new news are active', NULL, 'checkbox', NULL, 1, @settingsCategoryId, @moduleId, 1, NULL, NULL, NULL);
+('news_auto_approve', 'News auto approve', NULL, 'checkbox', NULL, 1, @settingsCategoryId, @moduleId, 1, NULL, NULL, NULL);
 SET @settingId = (SELECT LAST_INSERT_ID());
 
 INSERT INTO `application_setting_value` (`setting_id`, `value`, `language`) VALUES
@@ -108,6 +116,7 @@ CREATE TABLE IF NOT EXISTS `news_list` (
     `meta_keywords` VARCHAR(150) DEFAULT NULL,
     `created` INT(10) UNSIGNED NOT NULL,
     `language` CHAR(2) NOT NULL,
+    `date_edited` DATE NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE `slug` (`slug`, `language`),
     KEY `news_status` (`language`, `status`),

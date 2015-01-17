@@ -27,6 +27,110 @@ class NewsEvent extends ApplicationAbstractEvent
     const ADD_NEWS = 'news_add';
 
     /**
+     * Edit news event
+     */
+    const EDIT_NEWS = 'news_edit';
+
+    /**
+     * Delete news event
+     */
+    const DELETE_NEWS = 'news_delete';
+
+    /**
+     * Approve news event
+     */
+    const APPROVE_NEWS = 'news_approve';
+
+    /**
+     * Disapprove news event
+     */
+    const DISAPPROVE_NEWS = 'news_disapprove';
+
+    /**
+     * Fire disapprove news event
+     *
+     * @param integer $newsId
+     * @return void
+     */
+    public static function fireDisapproveNewsEvent($newsId)
+    {
+        // event's description
+        $eventDesc = UserIdentityService::isGuest()
+            ? 'Event - News disapproved by guest'
+            : 'Event - News disapproved by user';
+
+        $eventDescParams = UserIdentityService::isGuest()
+            ? [$newsId]
+            : [UserIdentityService::getCurrentUserIdentity()['nick_name'], $newsId];
+
+        self::fireEvent(self::DISAPPROVE_NEWS, 
+                $newsId, UserIdentityService::getCurrentUserIdentity()['user_id'], $eventDesc, $eventDescParams);
+    }
+
+    /**
+     * Fire approve news event
+     *
+     * @param integer $newsId
+     * @return void
+     */
+    public static function fireApproveNewsEvent($newsId)
+    {
+        // event's description
+        $eventDesc = UserIdentityService::isGuest()
+            ? 'Event - News approved by guest'
+            : 'Event - News approved by user';
+
+        $eventDescParams = UserIdentityService::isGuest()
+            ? [$newsId]
+            : [UserIdentityService::getCurrentUserIdentity()['nick_name'], $newsId];
+
+        self::fireEvent(self::APPROVE_NEWS, 
+                $newsId, UserIdentityService::getCurrentUserIdentity()['user_id'], $eventDesc, $eventDescParams);
+    }
+
+    /**
+     * Fire delete news event
+     *
+     * @param integer $newsId
+     * @return void
+     */
+    public static function fireDeleteNewsEvent($newsId)
+    {
+        // event's description
+        $eventDesc = UserIdentityService::isGuest()
+            ? 'Event - News deleted by guest'
+            : 'Event - News deleted by user';
+
+        $eventDescParams = UserIdentityService::isGuest()
+            ? [$newsId]
+            : [UserIdentityService::getCurrentUserIdentity()['nick_name'], $newsId];
+
+        self::fireEvent(self::DELETE_NEWS, 
+                $newsId, UserIdentityService::getCurrentUserIdentity()['user_id'], $eventDesc, $eventDescParams);
+    }
+
+    /**
+     * Fire edit news event
+     *
+     * @param integer $newsId
+     * @return void
+     */
+    public static function fireEditNewsEvent($newsId)
+    {
+        // event's description
+        $eventDesc = UserIdentityService::isGuest()
+            ? 'Event - News edited by guest'
+            : 'Event - News edited by user';
+
+        $eventDescParams = UserIdentityService::isGuest()
+            ? [$newsId]
+            : [UserIdentityService::getCurrentUserIdentity()['nick_name'], $newsId];
+
+        self::fireEvent(self::EDIT_NEWS, 
+                $newsId, UserIdentityService::getCurrentUserIdentity()['user_id'], $eventDesc, $eventDescParams);
+    }
+
+    /**
      * Fire add news event
      *
      * @param integer $newsId

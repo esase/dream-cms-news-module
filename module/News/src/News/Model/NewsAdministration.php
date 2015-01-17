@@ -11,11 +11,55 @@ use Application\Utility\ApplicationPagination as PaginationUtility;
 use Zend\Paginator\Adapter\DbSelect as DbSelectPaginator;
 use Zend\Paginator\Paginator;
 use Zend\Db\Sql\Predicate\NotIn as NotInPredicate;
+use Zend\Db\Sql\Predicate\In as InPredicate;
 use Zend\Db\ResultSet\ResultSet;
+use Zend\Db\Sql\Predicate\Like as LikePredicate;
+use Zend\Db\Sql\Expression as Expression;
 use Exception;
 
 class NewsAdministration extends NewsBase
 {
+    /**
+     * Set news's status
+     *
+     * @param integer $newsId
+     * @param boolean $approved
+     * @return boolean|string
+     */
+    public function setNewsStatus($newsId, $approved = true)
+    {
+        try {
+            $this->adapter->getDriver()->getConnection()->beginTransaction();
+
+            $update = $this->update()
+                ->table('news_list')
+                ->set([
+                    'status' => $approved ? self::STATUS_APPROVED : self::STATUS_DISAPPROVED,
+                ])
+                ->where([
+                    'id' => $newsId
+                ]);
+
+            $statement = $this->prepareStatementForSqlObject($update);
+            $statement->execute();
+
+            $this->adapter->getDriver()->getConnection()->commit();
+        }
+        catch (Exception $e) {
+            $this->adapter->getDriver()->getConnection()->rollback();
+            ApplicationErrorLogger::log($e);
+
+            return $e->getMessage();
+        }
+
+        // fire events
+        true === $approved
+            ? NewsEvent::fireApproveNewsEvent($newsId)
+            : NewsEvent::fireDisapproveNewsEvent($newsId);
+
+        return true;
+    }
+
     /**
      * Edit category
      *
@@ -84,9 +128,14 @@ class NewsAdministration extends NewsBase
             return $e->getMessage();
         }
 
-        // fire the delete category event
-        NewsEvent::fireDeleteCategoryEvent($categoryId);
-        return $result->count() ? true : false;
+        $result = $result->count() ? true : false;
+
+        if ($result) {
+            // fire the delete category event
+            NewsEvent::fireDeleteCategoryEvent($categoryId);
+        }
+
+        return $result;
     }
 
     /**
@@ -126,6 +175,116 @@ class NewsAdministration extends NewsBase
     }
 
     /**
+     * Edit news
+     *
+     * @param array $newsInfo
+     *      integer id
+     *      string title
+     *      string slug
+     *      string intro
+     *      string text
+     *      string status
+     *      string image
+     *      string meta_description
+     *      string meta_keywords
+     *      integer created
+     *      string language
+     *      array categories
+     *      string date_edited
+     * @param array $formData
+     *      string title
+     *      string intro
+     *      string text
+     *      string meta_description
+     *      string meta_keywords
+     * @param array $categories
+     * @param array $image
+     * @param boolean $approved
+     * @param boolean $deleteImage
+     * @return boolean|string
+     */
+    public function editNews($newsInfo, array $formData, $categories = null, array $image = [], $approved = false, $deleteImage = false)
+    {
+        try {
+            $this->adapter->getDriver()->getConnection()->beginTransaction();
+
+            $extraValues = [
+               'status' => $approved ? self::STATUS_APPROVED : self::STATUS_DISAPPROVED,
+               'date_edited' => date('Y-m-d')
+            ];
+
+            // generate a new slug
+            if (empty($formData['slug'])) {
+                $extraValues['slug'] = $this->
+                        generateSlug($newsInfo['id'], $formData['title'], 'news_list', 'id', self::NEWS_SLUG_LENGTH);
+            }
+
+            $update = $this->update()
+                ->table('news_list')
+                ->set(array_merge($formData, $extraValues))
+                ->where([
+                    'id' => $newsInfo['id']
+                ]);
+
+            $statement = $this->prepareStatementForSqlObject($update);
+            $statement->execute();
+
+            // update categories
+            $this->updateCategories($newsInfo['id'], $categories);
+
+            // upload the news's image
+            $this->uploadImage($newsInfo['id'], $image, $newsInfo['image'], $deleteImage);
+
+            $this->adapter->getDriver()->getConnection()->commit();
+        }
+        catch (Exception $e) {
+            $this->adapter->getDriver()->getConnection()->rollback();
+            ApplicationErrorLogger::log($e);
+
+            return $e->getMessage();
+        }
+
+        // fire the edit news event
+        NewsEvent::fireEditNewsEvent($newsInfo['id']);
+        return true;
+    }
+
+    /**
+     * Update categories
+     *
+     * @param integer $newsId
+     * @param string|array $categories
+     * @return void
+     */
+    protected function updateCategories($newsId, $categories = null)
+    {
+        // clear all old news connections
+        $delete = $this->delete()
+            ->from('news_category_connection')
+            ->where([
+                'news_id' => $newsId
+            ]);
+
+        $statement = $this->prepareStatementForSqlObject($delete);
+        $result = $statement->execute();
+
+        // add categories connections
+        if ($categories && is_array($categories)) {
+            foreach ($categories as $category) {
+                $insert = $this->insert()
+                    ->into('news_category_connection')
+                    ->values([
+                        'category_id' => $category,
+                        'news_id' => $newsId
+                    ]);
+
+                $statement = $this->prepareStatementForSqlObject($insert);
+                $statement->execute();
+            }
+        }
+    }
+
+    /**
      * Add a new news
      *
      * @param array $newsInfo
@@ -136,9 +295,10 @@ class NewsAdministration extends NewsBase
      *      string meta_keywords
      * @param array $categories
      * @param array $image
+     * @param boolean $approved
      * @return boolean|string
      */
-    public function addNews(array $newsInfo, $categories = null, array $image = [])
+    public function addNews(array $newsInfo, $categories = null, array $image = [], $approved = false)
     {
         try {
             $this->adapter->getDriver()->getConnection()->beginTransaction();
@@ -146,11 +306,10 @@ class NewsAdministration extends NewsBase
             $insert = $this->insert()
                 ->into('news_list')
                 ->values(array_merge($newsInfo, [
-                    'status' => (int) SettingService::getSetting('news_auto_confirm') 
-                        ? self::STATUS_APPROVED 
-                        : self::STATUS_DISAPPROVED,
+                    'status' => $approved ? self::STATUS_APPROVED : self::STATUS_DISAPPROVED,
                     'created' => time(),
-                    'language' => $this->getCurrentLanguage()
+                    'language' => $this->getCurrentLanguage(),
+                    'date_edited' => date('Y-m-d')
                 ]));
 
             $statement = $this->prepareStatementForSqlObject($insert);
@@ -172,22 +331,10 @@ class NewsAdministration extends NewsBase
                 $statement->execute();
             }
 
-            // add categories connections
-            if ($categories && is_array($categories)) {
-                foreach ($categories as $category) {
-                    $insert = $this->insert()
-                        ->into('news_category_connection')
-                        ->values([
-                            'category_id' => $category,
-                            'news_id' => $insertId
-                        ]);
+            // update categories
+            $this->updateCategories($insertId, $categories);
 
-                    $statement = $this->prepareStatementForSqlObject($insert);
-                    $statement->execute();
-                }
-            }
-
-            // upload the news' image
+            // upload the news's image
             $this->uploadImage($insertId, $image);
 
             $this->adapter->getDriver()->getConnection()->commit();
@@ -202,6 +349,66 @@ class NewsAdministration extends NewsBase
         // fire the add news event
         NewsEvent::fireAddNewsEvent($insertId);
         return true;
+    }
+
+    /**
+     * Delete a news
+     *
+     * @param array $newsInfo
+     *      integer id
+     *      string title
+     *      string slug
+     *      string intro
+     *      string text
+     *      string status
+     *      string image
+     *      string meta_description
+     *      string meta_keywords
+     *      integer created
+     *      string language
+     *      array categories
+     *      string date_edited
+     * @throws News/Exception/NewsException
+     * @return boolean|string
+     */
+    public function deleteNews(array $newsInfo)
+    {
+        try {
+            $this->adapter->getDriver()->getConnection()->beginTransaction();
+
+            $delete = $this->delete()
+                ->from('news_list')
+                ->where([
+                    'id' => $newsInfo['id']
+                ]);
+
+            $statement = $this->prepareStatementForSqlObject($delete);
+            $result = $statement->execute();
+
+            // delete an image
+            if ($newsInfo['image']) {
+                if (true !== ($imageDeleteResult = $this->deleteNewsImage($newsInfo['image']))) {
+                    throw new NewsException('Image deleting failed');
+                }
+            }
+
+            $this->adapter->getDriver()->getConnection()->commit();
+        }
+        catch (Exception $e) {
+            $this->adapter->getDriver()->getConnection()->rollback();
+            ApplicationErrorLogger::log($e);
+
+            return $e->getMessage();
+        }
+
+        $result =  $result->count() ? true : false;
+
+        // fire the delete news event
+        if ($result) {
+            NewsEvent::fireDeleteNewsEvent($newsInfo['id']);
+        }
+
+        return $result;
     }
 
     /**
@@ -221,11 +428,11 @@ class NewsAdministration extends NewsBase
      */
     protected function uploadImage($newsId, array $image, $oldImage = null, $deleteImage = false)
     {
-        // upload the news' image
+        // upload the news's image
         if (!empty($image['name'])) {
             // delete an old image
             if ($oldImage) {
-                if (true !== ($result = $this->deletNewsImage($oldImage))) {
+                if (true !== ($result = $this->deleteNewsImage($oldImage))) {
                     throw new NewsException('Image deleting failed');
                 }
             }
@@ -259,8 +466,8 @@ class NewsAdministration extends NewsBase
             $statement->execute();
         }
         elseif ($deleteImage && $oldImage) {
-            // just delete the user's avatar
-            if (true !== ($result = $this->deletNewsImage($oldImage))) {
+            // just delete the news's image
+            if (true !== ($result = $this->deleteNewsImage($oldImage))) {
                 throw new NewsException('Image deleting failed');
             }
 
@@ -360,9 +567,13 @@ class NewsAdministration extends NewsBase
      * @param integer $perPage
      * @param string $orderBy
      * @param string $orderType
+     * @param array $filters
+     *      string title
+     *      string status
+     *      array categories
      * @return object
      */
-    public function getNews($page = 1, $perPage = 0, $orderBy = null, $orderType = null)
+    public function getNews($page = 1, $perPage = 0, $orderBy = null, $orderType = null, array $filters = [])
     {
         $orderFields = [
             'id',
@@ -380,7 +591,7 @@ class NewsAdministration extends NewsBase
             : 'id';
 
         $select = $this->select();
-        $select->from('news_list')
+        $select->from(['a' => 'news_list'])
             ->columns([
                 'id',
                 'title',
@@ -388,9 +599,38 @@ class NewsAdministration extends NewsBase
                 'created'
             ])
             ->where([
-                'language' => $this->getCurrentLanguage()
+                'a.language' => $this->getCurrentLanguage()
             ])
-            ->order($orderBy . ' ' . $orderType);
+            ->order('a.' . $orderBy . ' ' . $orderType);
+
+        // filter by status
+        if (!empty($filters['status'])) {
+            $select->where([
+                'a.status' => $filters['status']
+            ]);
+        }
+
+        // filter by title
+        if (!empty($filters['title'])) {
+            $select->where([
+                new LikePredicate('a.title', '%' . $filters['title'] . '%')
+            ]);
+        }
+
+        // filter by categories
+        if (!empty($filters['categories']) && is_array($filters['categories'])) {
+            $select->join(
+                ['b' => 'news_category_connection'],
+                'a.id = b.news_id',
+                []
+            );
+
+            $select->where([
+                new InPredicate('b.category_id', $filters['categories'])
+            ]);
+
+            $select->group('a.id');
+        }
 
         $paginator = new Paginator(new DbSelectPaginator($select, $this->adapter));
         $paginator->setCurrentPageNumber($page);
@@ -421,7 +661,7 @@ class NewsAdministration extends NewsBase
 
         if ($newsId) {
             $select->where([
-                new NotInPredicate('user_id', [$newsId])
+                new NotInPredicate('id', [$newsId])
             ]);
         }
 

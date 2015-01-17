@@ -20,11 +20,11 @@
     'default_order' => 'id',
     'default_order_type' => 'desc',
     'headers' => [
-        0 => [
+        [
             'title' => $this->translate('ID'),
             'order_name' => 'id'
         ],
-        1 => [
+        [
             'title' => $this->translate('Category name'),
             'order_name' => 'name'
         ]
@@ -36,7 +36,7 @@
     ],
     'actions' => [
         'regular_actions' => [
-            0 => [
+            [
                 'name' => $this->translate('Add a category'),
                 'controller' => 'news-administration',
                 'action' => 'add-category',
@@ -44,7 +44,7 @@
             ]
         ],
         'multiple_actions' => [
-            0 => [
+            [
                 'name' => $this->translate('Delete selected'),
                 'controller' => 'news-administration',
                 'action' => 'delete-categories',
@@ -53,7 +53,7 @@
             ]
         ],
         'single_actions' => [
-            0 => [
+            [
                 'name' => $this->translate('Edit the category'),
                 'controller' => 'news-administration',
                 'action' => 'edit-category',

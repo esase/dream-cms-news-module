@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dream CMS \"news\" module\n"
 "POT-Creation-Date: 2013-07-19 11:59+0600\n"
-"PO-Revision-Date: 2015-01-14 15:28+0600\n"
+"PO-Revision-Date: 2015-01-17 15:33+0600\n"
 "Last-Translator: AlexE <alexermashev@gmail.com>\n"
 "Language-Team: \n"
 "Language: Русский\n"
@@ -15,6 +15,51 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+msgid "News will be approved. Are you sure?"
+msgstr "Новость будет активирована. Вы уверены?"
+
+msgid "Approve the news"
+msgstr "Активировать новость"
+
+msgid "News will be disapproved. Are you sure?"
+msgstr "Новость будет дезактивирована. Вы уверены?"
+
+msgid "Disapprove the news"
+msgstr "Дезактивировать новость"
+
+msgid "The selected news has been disapproved"
+msgstr "Выбранная новость была дезактивирована"
+
+msgid "Selected news have been disapproved"
+msgstr "Выбранные новости были дезактивированы"
+
+msgid "The selected news has been approved"
+msgstr "Выбранная новость была активирована"
+
+msgid "Selected news have been approved"
+msgstr "Выбранные новости были активированы"
+
+msgid "The selected news has been deleted"
+msgstr "Выбранная новость была удалена"
+
+msgid "Selected news have been deleted"
+msgstr "Выбранные новости были удалены"
+
+msgid "Selected news will be deleted. Are you sure?"
+msgstr "Выбранные новости будут удалены. Вы уверены?"
+
+msgid "News has been edited"
+msgstr "Новость была отредактирована"
+
+msgid "News will be deleted. Are you sure?"
+msgstr "Новость будет удалена. Вы уверены?"
+
+msgid "Delete the news"
+msgstr "Удалить новость"
+
+msgid "Edit the news"
+msgstr "Редактировать новость"
 
 msgid "Image uploading failed"
 msgstr "Не удалось загрузить изображение"
@@ -40,8 +85,8 @@ msgstr "Ширина изображения новости"
 msgid "News date format"
 msgstr "Формат даты новостей"
 
-msgid "Default new news are active"
-msgstr "По умолчанию новые новости активны"
+msgid "News auto approve"
+msgstr "Авто активация новостей"
 
 msgid "News has been added"
 msgstr "Новость была добавлена"
@@ -109,6 +154,42 @@ msgstr "Новости"
 msgid "Module allows to publish news on the site"
 msgstr "Модуль позволяет публиковать новости на сайте"
 
+msgid "Event - Approving news"
+msgstr "Активация новостей"
+
+msgid "Event - News approved by guest"
+msgstr "Гость активировал новость с идентификатором - \"%d\""
+
+msgid "Event - News approved by user"
+msgstr "\"%s\" активировал(а) новость с идентификатором - \"%d\""
+
+msgid "Event - Disapproving news"
+msgstr "Дезактивирование новостей"
+
+msgid "Event - News disapproved by guest"
+msgstr "Гость дезактивировал новость с идентификатором - \"%d\""
+
+msgid "Event - News disapproved by user"
+msgstr "\"%s\" дезактивировал(а) новость с идентификатором - \"%d\""
+
+msgid "Event - Deleting news"
+msgstr "Удаление новостей"
+
+msgid "Event - News deleted by guest"
+msgstr "Гость удалил новость с идентификатором - \"%d\""
+
+msgid "Event - News deleted by user"
+msgstr "\"%s\" удалил(а) новость с идентификатором - \"%d\""
+
+msgid "Event - Editing news"
+msgstr "Редактирование новостей"
+
+msgid "Event - News edited by guest"
+msgstr "Гость отредактировал новость с идентификатором - \"%d\""
+
+msgid "Event - News edited by user"
+msgstr "\"%s\" отредактировал(а) новость с идентификатором - \"%d\""
+
 msgid "Event - Adding news"
 msgstr "Добавление новостей"
 
@@ -166,3 +247,15 @@ msgstr "Редактирование новостных категорий в а
 
 msgid "ACL - Adding news in admin area"
 msgstr "Добавление новостей в админке"
+
+msgid "ACL - Editing news in admin area"
+msgstr "Редактирование новостей в админке"
+
+msgid "ACL - Deleting news in admin area"
+msgstr "Удаление новостей в админке"
+
+msgid "ACL - Approving news in admin area"
+msgstr "Активация новостей в админке"
+
+msgid "ACL - Disapproving news in admin area"
+msgstr "Дезактивирование новостей в админке"
