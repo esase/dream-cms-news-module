@@ -1,0 +1,259 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Dream CMS \"news\" module\n"
+"POT-Creation-Date: 2013-07-19 11:59+0600\n"
+"PO-Revision-Date: 2015-01-17 15:33+0600\n"
+"Last-Translator: AlexE <alexermashev@gmail.com>\n"
+"Language-Team: \n"
+"Language: English\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.7\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "News will be approved. Are you sure?"
+msgstr "News will be approved. Are you sure?"
+
+msgid "Approve the news"
+msgstr "Approve the news"
+
+msgid "News will be disapproved. Are you sure?"
+msgstr "News will be disapproved. Are you sure?"
+
+msgid "Disapprove the news"
+msgstr "Disapprove the news"
+
+msgid "The selected news has been disapproved"
+msgstr "The selected news has been disapproved"
+
+msgid "Selected news have been disapproved"
+msgstr "Selected news have been disapproved"
+
+msgid "The selected news has been approved"
+msgstr "The selected news has been approved"
+
+msgid "Selected news have been approved"
+msgstr "Selected news have been approved"
+
+msgid "The selected news has been deleted"
+msgstr "The selected news has been deleted"
+
+msgid "Selected news have been deleted"
+msgstr "Selected news have been deleted"
+
+msgid "Selected news will be deleted. Are you sure?"
+msgstr "Selected news will be deleted. Are you sure?"
+
+msgid "News has been edited"
+msgstr "News has been edited"
+
+msgid "News will be deleted. Are you sure?"
+msgstr "News will be deleted. Are you sure?"
+
+msgid "Delete the news"
+msgstr "Delete the news"
+
+msgid "Edit the news"
+msgstr "Edit the news"
+
+msgid "Image uploading failed"
+msgstr "Image uploading failed"
+
+msgid "Image deleting failed"
+msgstr "Image deleting failed"
+
+msgid "News images"
+msgstr "News images"
+
+msgid "News thumbnail height"
+msgstr "News thumbnail height"
+
+msgid "News thumbnail width"
+msgstr "News thumbnail width"
+
+msgid "News image height"
+msgstr "News image height"
+
+msgid "News image width"
+msgstr "News image width"
+
+msgid "News date format"
+msgstr "News date format"
+
+msgid "News auto approve"
+msgstr "News auto approve"
+
+msgid "News has been added"
+msgstr "News has been added"
+
+msgid "Categories"
+msgstr "Categories"
+
+msgid "Text"
+msgstr "Text"
+
+msgid "Intro"
+msgstr "Intro"
+
+msgid "New news"
+msgstr "New news"
+
+msgid "Add a news"
+msgstr "Add a news"
+
+msgid "Category will be deleted. Are you sure?"
+msgstr "Category will be deleted. Are you sure?"
+
+msgid "Delete the category"
+msgstr "Delete the category"
+
+msgid "Category has been edited"
+msgstr "Category has been edited"
+
+msgid "The selected category has been deleted"
+msgstr "The selected category has been deleted"
+
+msgid "Selected categories have been deleted"
+msgstr "Selected categories have been deleted"
+
+msgid "Category has been added"
+msgstr "Category has been added"
+
+msgid "Category already exists"
+msgstr "Category already exists"
+
+msgid "News categories"
+msgstr "News categories"
+
+msgid "Edit the category"
+msgstr "Edit the category"
+
+msgid "Selected news categories will be deleted. Are you sure?"
+msgstr "Selected news categories will be deleted. Are you sure?"
+
+msgid "Add a category"
+msgstr "Add a category"
+
+msgid "Category name"
+msgstr "Category name"
+
+msgid "List of categories"
+msgstr "List of categories"
+
+msgid "List of news"
+msgstr "List of news"
+
+msgid "News"
+msgstr "News"
+
+msgid "Module allows to publish news on the site"
+msgstr "Module allows to publish news on the site"
+
+msgid "Event - Approving news"
+msgstr "Approving news"
+
+msgid "Event - News approved by guest"
+msgstr "Guest approved the news with id - \"%d\""
+
+msgid "Event - News approved by user"
+msgstr "\"%s\" approved the news with id - \"%d\""
+
+msgid "Event - Disapproving news"
+msgstr "Disapproving news"
+
+msgid "Event - News disapproved by guest"
+msgstr "Guest disapproved the news with id - \"%d\""
+
+msgid "Event - News disapproved by user"
+msgstr "\"%s\" disapproved the news with id - \"%d\""
+
+msgid "Event - Deleting news"
+msgstr "Deleting news"
+
+msgid "Event - News deleted by guest"
+msgstr "Guest deleted the news with id - \"%d\""
+
+msgid "Event - News deleted by user"
+msgstr "\"%s\" deleted the news with id - \"%d\""
+
+msgid "Event - Editing news"
+msgstr "Editing news"
+
+msgid "Event - News edited by guest"
+msgstr "Guest edited the news with id - \"%d\""
+
+msgid "Event - News edited by user"
+msgstr "\"%s\" edited the news with id - \"%d\""
+
+msgid "Event - Adding news"
+msgstr "Adding news"
+
+msgid "Event - News added by guest"
+msgstr "Guest added the news with id - \"%d\""
+
+msgid "Event - News added by user"
+msgstr "\"%s\" added the news with id - \"%d\""
+
+msgid "Event - Editing news categories"
+msgstr "Editing news categories"
+
+msgid "Event - News category edited by guest"
+msgstr "Guest edited the news category with id - \"%d\""
+
+msgid "Event - News category edited by user"
+msgstr "\"%s\" edited the news category with id - \"%d\""
+
+msgid "Event - Adding news categories"
+msgstr "Adding news categories"
+
+msgid "Event - News category added by guest"
+msgstr "Guest added the news category with id - \"%d\""
+
+msgid "Event - News category added by user"
+msgstr "\"%s\" added the news category with id - \"%d\""
+
+msgid "Event - Deleting news categories"
+msgstr "Deleting news categories"
+
+msgid "Event - News category deleted by guest"
+msgstr "Guest deleted the news category with id - \"%d\""
+
+msgid "Event - News category deleted by user"
+msgstr "\"%s\" deleted the news category with id - \"%d\""
+
+msgid "ACL - Viewing news in admin area"
+msgstr "Viewing news in admin area"
+
+msgid "ACL - Viewing news categories in admin area"
+msgstr "Viewing news categories in admin area"
+
+msgid "ACL - Editing news settings in admin area"
+msgstr "Editing news settings in admin area"
+
+msgid "ACL - Adding news categories in admin area"
+msgstr "Adding news categories in admin area"
+
+msgid "ACL - Deleting news categories in admin area"
+msgstr "Deleting news categories in admin area"
+
+msgid "ACL - Editing news categories in admin area"
+msgstr "Editing news categories in admin area"
+
+msgid "ACL - Adding news in admin area"
+msgstr "Adding news in admin area"
+
+msgid "ACL - Editing news in admin area"
+msgstr "Editing news in admin area"
+
+msgid "ACL - Deleting news in admin area"
+msgstr "Deleting news in admin area"
+
+msgid "ACL - Approving news in admin area"
+msgstr "Approving news in admin area"
+
+msgid "ACL - Disapproving news in admin area"
+msgstr "Disapproving news in admin area"
