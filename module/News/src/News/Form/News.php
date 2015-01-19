@@ -13,7 +13,7 @@ class News extends ApplicationAbstractCustomForm
     /**
      * Title max string length
      */
-    const TITLE_MAX_LENGTH = 50;
+    const TITLE_MAX_LENGTH = 150;
 
     /**
      * Slug max string length

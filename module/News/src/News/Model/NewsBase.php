@@ -39,6 +39,18 @@ class NewsBase extends ApplicationAbstractBase
     protected static $thumbnailsDir = 'news/thumbnail/';
 
     /**
+     * News info
+     * @var array
+     */
+    protected static $newsInfo = [];
+
+    /**
+     * All categories
+     * @var array
+     */
+    protected static $allCategories = null;
+
+    /**
      * Get images directory name
      *
      * @return string
@@ -88,7 +100,9 @@ class NewsBase extends ApplicationAbstractBase
      */
     public function getAllCategories()
     {
-        $categories = [];
+        if (null !== self::$allCategories) {
+            return self::$allCategories;
+        }
 
         $select = $this->select();
         $select->from('news_category')
@@ -106,11 +120,12 @@ class NewsBase extends ApplicationAbstractBase
         $resultSet->initialize($statement->execute());
 
         // process categories
+        self::$allCategories = [];
         foreach ($resultSet as $category) {
-            $categories[$category->id] = $category->name;
+            self::$allCategories[$category->id] = $category->name;
         }
 
-        return $categories;
+        return self::$allCategories;
     }
 
     /**
@@ -249,6 +264,13 @@ class NewsBase extends ApplicationAbstractBase
      */
     public function getNewsInfo($id, $currentLanguage = true, $categories = false)
     {
+        $memoryKey = (int) $currentLanguage . '_' . (int) $categories;
+
+        // check data in a memory
+        if (isset(self::$newsInfo[$id][$memoryKey])) {
+            return self::$newsInfo[$id][$memoryKey];
+        }
+
         $select = $this->select();
         $select->from('news_list')
             ->columns([
@@ -297,6 +319,7 @@ class NewsBase extends ApplicationAbstractBase
             }
         }
 
+        self::$newsInfo[$id][$memoryKey] = $news;
         return $news;
     }
 }

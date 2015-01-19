@@ -1,6 +1,8 @@
 <?php
 namespace News;
 
+use Application\Service\Application as ApplicationService;
+use News\Model\NewsBase as NewsBaseModel;
 use Localization\Event\LocalizationEvent;
 use Zend\ModuleManager\ModuleManagerInterface;
 
@@ -61,7 +63,19 @@ class Module
      */
     public function getViewHelperConfig()
     {
-        return [];
+        return [
+            'invokables' => [
+                'newsLastNewsWidget' => 'News\View\Widget\NewsLastNewsWidget'
+            ],
+            'factories' => [
+                'newsImageUrl' => function(){
+                    $thumbDir  = ApplicationService::getResourcesUrl() . NewsBaseModel::getThumbnailsDir();
+                    $imageDir = ApplicationService::getResourcesUrl() . NewsBaseModel::getImagesDir();
+
+                    return new \News\View\Helper\NewsImageUrl($thumbDir, $imageDir);
+                }
+            ]
+        ];
     }
 
     /**

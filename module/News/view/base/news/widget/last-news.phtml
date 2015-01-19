@@ -1,0 +1,41 @@
+<?php $this->declareVars('dateFormat', 'newsDate', 'newsViewUrl', 'newsListUrl') ?>
+<?php $this->dateFormat = $this->applicationSetting('news_date_format') ?>
+<?php $this->newsViewUrl = $this->pageUrl('news', [], null, true) ?>
+
+<?php foreach ($this->last_news as $news): ?>
+    <?php $this->newsDate = $this->applicationDate($news->created, ['format' => $this->dateFormat]) ?>
+    <div class="media">
+        <?php if($news->image): ?>
+            <a href="<?php echo $this->url('page', ['page_name' => $this->newsViewUrl, 'slug' => $news->slug], ['force_canonical' => true]) ?>" class="media-left">
+                <img alt="<?php echo $this->escapeHtmlAttr($news->title) ?>" src="<?php echo $this->escapeHtmlAttr($this->newsImageUrl($news->image)) ?>" />
+            </a>
+        <?php endif ?>
+        <div class="media-body">
+            <h4 class="media-heading">
+                <a href="<?php echo $this->url('page', ['page_name' => $this->newsViewUrl, 'slug' => $news->slug], ['force_canonical' => true]) ?>">
+                    <?php echo $this->escapeHtml($news->title) ?>
+                </a>
+            </h4>
+            <p>
+                <strong>
+                    <time class="news-date" datetime="<?php echo $this->escapeHtmlAttr(date('Y-m-d H:m:s'), $this->newsDate) ?>">
+                        <?php echo $this->escapeHtml($this->newsDate) ?>
+                    </time>
+                </strong>
+                <?php echo $this->escapeHtml($news->intro) ?>
+            </p>
+        </div>
+    </div>
+<?php endforeach ?>
+
+<?php if($this->all_news_link): ?>
+    <?php $this->newsListUrl = $this->pageUrl('news-list') ?>
+    <?php if(false !== ($this->newsListUrl)): ?>
+        <hr />
+        <p>
+            <a href="<?php echo $this->url('page', ['page_name' => $this->newsListUrl], ['force_canonical' => true]) ?>">
+                <?php echo $this->translate('View all news') ?>
+            </a>
+        </p>
+    <?php endif ?>
+<?php endif ?>

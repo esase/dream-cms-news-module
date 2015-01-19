@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dream CMS \"news\" module\n"
 "POT-Creation-Date: 2013-07-19 11:59+0600\n"
-"PO-Revision-Date: 2015-01-17 15:33+0600\n"
+"PO-Revision-Date: 2015-01-19 16:33+0600\n"
 "Last-Translator: AlexE <alexermashev@gmail.com>\n"
 "Language-Team: \n"
 "Language: Русский\n"
@@ -15,6 +15,24 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+msgid "Show the link \"View all news\""
+msgstr "Показать ссылку \"Все новости\""
+
+msgid "View all news"
+msgstr "Все новости"
+
+msgid "Count of last news"
+msgstr "Количество последних новостей"
+
+msgid "Last news"
+msgstr "Последние новости"
+
+msgid "News list"
+msgstr "Список новостей"
+
+msgid "View news"
+msgstr "Просмотр новости"
 
 msgid "News will be approved. Are you sure?"
 msgstr "Новость будет активирована. Вы уверены?"
@@ -259,3 +277,6 @@ msgstr "Активация новостей в админке"
 
 msgid "ACL - Disapproving news in admin area"
 msgstr "Дезактивирование новостей в админке"
+
+msgid "ACL - Viewing news"
+msgstr "Просмотр новостей"
