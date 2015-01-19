@@ -14,7 +14,6 @@ use Zend\Db\Sql\Predicate\NotIn as NotInPredicate;
 use Zend\Db\Sql\Predicate\In as InPredicate;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Predicate\Like as LikePredicate;
-use Zend\Db\Sql\Expression as Expression;
 use Exception;
 
 class NewsAdministration extends NewsBase
@@ -349,66 +348,6 @@ class NewsAdministration extends NewsBase
         // fire the add news event
         NewsEvent::fireAddNewsEvent($insertId);
         return true;
-    }
-
-    /**
-     * Delete a news
-     *
-     * @param array $newsInfo
-     *      integer id
-     *      string title
-     *      string slug
-     *      string intro
-     *      string text
-     *      string status
-     *      string image
-     *      string meta_description
-     *      string meta_keywords
-     *      integer created
-     *      string language
-     *      array categories
-     *      string date_edited
-     * @throws News/Exception/NewsException
-     * @return boolean|string
-     */
-    public function deleteNews(array $newsInfo)
-    {
-        try {
-            $this->adapter->getDriver()->getConnection()->beginTransaction();
-
-            $delete = $this->delete()
-                ->from('news_list')
-                ->where([
-                    'id' => $newsInfo['id']
-                ]);
-
-            $statement = $this->prepareStatementForSqlObject($delete);
-            $result = $statement->execute();
-
-            // delete an image
-            if ($newsInfo['image']) {
-                if (true !== ($imageDeleteResult = $this->deleteNewsImage($newsInfo['image']))) {
-                    throw new NewsException('Image deleting failed');
-                }
-            }
-
-            $this->adapter->getDriver()->getConnection()->commit();
-        }
-        catch (Exception $e) {
-            $this->adapter->getDriver()->getConnection()->rollback();
-            ApplicationErrorLogger::log($e);
-
-            return $e->getMessage();
-        }
-
-        $result =  $result->count() ? true : false;
-
-        // fire the delete news event
-        if ($result) {
-            NewsEvent::fireDeleteNewsEvent($newsInfo['id']);
-        }
-
-        return $result;
     }
 
     /**
