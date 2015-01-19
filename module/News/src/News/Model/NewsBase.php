@@ -1,9 +1,13 @@
 <?php
 namespace News\Model;
 
+use Application\Utility\ApplicationErrorLogger;
 use Application\Utility\ApplicationFileSystem as FileSystemUtility;
 use Application\Model\ApplicationAbstractBase;
+use News\Event\NewsEvent;
+use News\Exception\NewsException;
 use Zend\Db\ResultSet\ResultSet;
+use Exception;
 
 class NewsBase extends ApplicationAbstractBase
 {
@@ -107,6 +111,101 @@ class NewsBase extends ApplicationAbstractBase
         }
 
         return $categories;
+    }
+
+    /**
+     * Get all news
+     * 
+     * @param string $language
+     * @return object ResultSet
+     */
+    public function getAllNews($language = null)
+    {
+        $select = $this->select();
+        $select->from('news_list')
+            ->columns([
+                'id',
+                'title',
+                'slug',
+                'intro',
+                'text',
+                'status',
+                'image',
+                'meta_description',
+                'meta_keywords',
+                'created',
+                'language',
+                'date_edited'
+            ])
+            ->where([
+                'language' => $language
+            ]);
+
+        $statement = $this->prepareStatementForSqlObject($select);
+        $resultSet = new ResultSet;
+        $resultSet->initialize($statement->execute());
+
+        return $resultSet;
+    }
+
+    /**
+     * Delete a news
+     *
+     * @param array $newsInfo
+     *      integer id
+     *      string title
+     *      string slug
+     *      string intro
+     *      string text
+     *      string status
+     *      string image
+     *      string meta_description
+     *      string meta_keywords
+     *      integer created
+     *      string language
+     *      array categories
+     *      string date_edited
+     * @throws News/Exception/NewsException
+     * @return boolean|string
+     */
+    public function deleteNews(array $newsInfo)
+    {
+        try {
+            $this->adapter->getDriver()->getConnection()->beginTransaction();
+
+            $delete = $this->delete()
+                ->from('news_list')
+                ->where([
+                    'id' => $newsInfo['id']
+                ]);
+
+            $statement = $this->prepareStatementForSqlObject($delete);
+            $result = $statement->execute();
+
+            // delete an image
+            if ($newsInfo['image']) {
+                if (true !== ($imageDeleteResult = $this->deleteNewsImage($newsInfo['image']))) {
+                    throw new NewsException('Image deleting failed');
+                }
+            }
+
+            $this->adapter->getDriver()->getConnection()->commit();
+        }
+        catch (Exception $e) {
+            $this->adapter->getDriver()->getConnection()->rollback();
+            ApplicationErrorLogger::log($e);
+
+            return $e->getMessage();
+        }
+
+        $result =  $result->count() ? true : false;
+
+        // fire the delete news event
+        if ($result) {
+            NewsEvent::fireDeleteNewsEvent($newsInfo['id']);
+        }
+
+        return $result;
     }
 
     /**

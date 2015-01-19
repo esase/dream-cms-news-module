@@ -1,8 +1,32 @@
 <?php
 namespace News;
 
+use Localization\Event\LocalizationEvent;
+use Zend\ModuleManager\ModuleManagerInterface;
+
 class Module
 {
+    /**
+     * Init
+     */
+    public function init(ModuleManagerInterface $moduleManager)
+    {
+        $eventManager = LocalizationEvent::getEventManager();
+        $eventManager->attach(LocalizationEvent::DELETE, function ($e) use ($moduleManager) {
+            $news = $moduleManager->getEvent()->getParam('ServiceManager')
+                ->get('Application\Model\ModelManager')
+                ->getInstance('News\Model\NewsBase');
+
+            // delete a language dependent news
+            if (null != ($newsList = $news->getAllNews($e->getParam('object_id')))) {
+                // process news list
+                foreach ($newsList as $newsInfo) {
+                    $news->deleteNews((array) $newsInfo);
+                }
+            }
+        });
+    }
+
     /**
      * Return autoloader config array
      *
