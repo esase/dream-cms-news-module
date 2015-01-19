@@ -1,9 +1,8 @@
-<?php $this->declareVars('dateFormat', 'newsDate', 'newsViewUrl', 'newsListUrl') ?>
+<?php $this->declareVars('dateFormat', 'newsViewUrl', 'newsListUrl') ?>
 <?php $this->dateFormat = $this->applicationSetting('news_date_format') ?>
 <?php $this->newsViewUrl = $this->pageUrl('news', [], null, true) ?>
 
 <?php foreach ($this->last_news as $news): ?>
-    <?php $this->newsDate = $this->applicationDate($news->created, ['format' => $this->dateFormat]) ?>
     <div class="media">
         <?php if($news->image): ?>
             <a href="<?php echo $this->url('page', ['page_name' => $this->newsViewUrl, 'slug' => $news->slug], ['force_canonical' => true]) ?>" class="media-left">
@@ -18,8 +17,8 @@
             </h4>
             <p>
                 <strong>
-                    <time class="news-date" datetime="<?php echo $this->escapeHtmlAttr(date('Y-m-d H:m:s'), $this->newsDate) ?>">
-                        <?php echo $this->escapeHtml($this->newsDate) ?>
+                    <time datetime="<?php echo $this->escapeHtmlAttr(date('Y-m-d H:m'), $news->created) ?>">
+                        <?php echo $this->escapeHtml($this->applicationDate($news->created, ['format' => $this->dateFormat])) ?>
                     </time>
                 </strong>
                 <?php echo $this->escapeHtml($news->intro) ?>
