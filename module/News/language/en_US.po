@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dream CMS \"news\" module\n"
 "POT-Creation-Date: 2013-07-19 11:59+0600\n"
-"PO-Revision-Date: 2015-01-19 16:33+0600\n"
+"PO-Revision-Date: 2015-01-20 19:14+0600\n"
 "Last-Translator: AlexE <alexermashev@gmail.com>\n"
 "Language-Team: \n"
 "Language: English\n"
@@ -14,6 +14,12 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Show news thumbnails"
+msgstr "Show news thumbnails"
+
+msgid "Category already exists"
+msgstr "Category already exists"
 
 msgid "Show the link \"View all news\""
 msgstr "Show the link \"View all news\""
@@ -140,9 +146,6 @@ msgstr "Selected categories have been deleted"
 
 msgid "Category has been added"
 msgstr "Category has been added"
-
-msgid "Category already exists"
-msgstr "Category already exists"
 
 msgid "News categories"
 msgstr "News categories"

@@ -2,30 +2,9 @@
 namespace News\View\Widget;
 
 use Acl\Service\Acl as AclService;
-use Page\View\Widget\PageAbstractWidget;
 
-class NewsLastNewsWidget extends PageAbstractWidget
+class NewsLastNewsWidget extends NewsAbstractWidget
 {
-    /**
-     * Model instance
-     * @var object  
-     */
-    protected $model;
-
-    /**
-     * Get model
-     */
-    protected function getModel()
-    {
-        if (!$this->model) {
-            $this->model = $this->getServiceLocator()
-                ->get('Application\Model\ModelManager')
-                ->getInstance('News\Model\NewsWidget');
-        }
-
-        return $this->model;
-    }
-
     /**
      * Get widget content
      *
@@ -33,10 +12,6 @@ class NewsLastNewsWidget extends PageAbstractWidget
      */
     public function getContent() 
     {
-        // TODO: Check categories exsting
-        // TODO: Get news date into news wrapper +
-        // TODO: Show the - view all news +
-        
         // check a permission
         if (AclService::checkPermission('news_view_news', false)) {
             $lastNews = $this->getModel()->getLastNews((int) $this->
@@ -45,6 +20,7 @@ class NewsLastNewsWidget extends PageAbstractWidget
             if (count($lastNews)) {
                 return $this->getView()->partial('news/widget/last-news', [
                     'all_news_link' => $this->getWidgetSetting('news_all_link_last_news'),
+                    'show_thumbnails' => $this->getWidgetSetting('news_thumbnails_last_news'),
                     'last_news' => $lastNews
                 ]);
             }

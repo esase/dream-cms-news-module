@@ -4,24 +4,24 @@
 
 <?php foreach ($this->last_news as $news): ?>
     <div class="media">
-        <?php if($news->image): ?>
-            <a href="<?php echo $this->url('page', ['page_name' => $this->newsViewUrl, 'slug' => $news->slug], ['force_canonical' => true]) ?>" class="media-left">
-                <img alt="<?php echo $this->escapeHtmlAttr($news->title) ?>" src="<?php echo $this->escapeHtmlAttr($this->newsImageUrl($news->image)) ?>" />
+        <?php if($news['image'] && $this->show_thumbnails): ?>
+            <a href="<?php echo $this->url('page', ['page_name' => $this->newsViewUrl, 'slug' => $news['slug']], ['force_canonical' => true]) ?>" class="media-left">
+                <img alt="<?php echo $this->escapeHtmlAttr($news['title']) ?>" src="<?php echo $this->escapeHtmlAttr($this->newsImageUrl($news['image'])) ?>" />
             </a>
         <?php endif ?>
         <div class="media-body">
             <h4 class="media-heading">
-                <a href="<?php echo $this->url('page', ['page_name' => $this->newsViewUrl, 'slug' => $news->slug], ['force_canonical' => true]) ?>">
-                    <?php echo $this->escapeHtml($news->title) ?>
+                <a href="<?php echo $this->url('page', ['page_name' => $this->newsViewUrl, 'slug' => $news['slug']], ['force_canonical' => true]) ?>">
+                    <?php echo $this->escapeHtml($news['title']) ?>
                 </a>
             </h4>
             <p>
                 <strong>
-                    <time datetime="<?php echo $this->escapeHtmlAttr(date('Y-m-d H:m'), $news->created) ?>">
-                        <?php echo $this->escapeHtml($this->applicationDate($news->created, ['format' => $this->dateFormat])) ?>
+                    <time datetime="<?php echo $this->escapeHtmlAttr(date('Y-m-d H:m'), $news['created']) ?>">
+                        <?php echo $this->escapeHtml($this->applicationDate($news['created'], ['format' => $this->dateFormat])) ?>
                     </time>
                 </strong>
-                <?php echo $this->escapeHtml($news->intro) ?>
+                <?php echo $this->escapeHtml($news['intro']) ?>
             </p>
         </div>
     </div>

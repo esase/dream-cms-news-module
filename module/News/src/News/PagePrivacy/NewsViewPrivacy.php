@@ -45,8 +45,8 @@ class NewsViewPrivacy extends PageAbstractPagePrivacy
         // get a news id from the route or params
         if (!$trustedData) {
             // check an existing news
-            if (null == ($newsInfo = $this->
-                    getModel()->getNewsInfo(RouteParamUtility::getParam('slug', -1)))) {
+            if (null == ($newsInfo = $this->getModel()->
+                    getNewsInfo(RouteParamUtility::getParam('slug', -1), true, false, 'slug', true))) {
 
                 return false;
             }

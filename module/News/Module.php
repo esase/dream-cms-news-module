@@ -65,7 +65,8 @@ class Module
     {
         return [
             'invokables' => [
-                'newsLastNewsWidget' => 'News\View\Widget\NewsLastNewsWidget'
+                'newsLastNewsWidget' => 'News\View\Widget\NewsLastNewsWidget',
+                'newsViewWidget' => 'News\View\Widget\NewsViewWidget'
             ],
             'factories' => [
                 'newsImageUrl' => function(){

@@ -87,28 +87,28 @@ INSERT INTO `application_setting` (`name`, `label`, `description`, `type`, `requ
 SET @settingId = (SELECT LAST_INSERT_ID());
 
 INSERT INTO `application_setting_value` (`setting_id`, `value`, `language`) VALUES
-(@settingId, '200', NULL);
+(@settingId, '300', NULL);
 
 INSERT INTO `application_setting` (`name`, `label`, `description`, `type`, `required`, `order`, `category`, `module`, `language_sensitive`, `values_provider`, `check`, `check_message`) VALUES
 ('news_image_height', 'News image height', NULL, 'integer', 1, 4, @settingsCategoryId, @moduleId, NULL, NULL, 'return intval(''__value__'') > 0;', 'Value should be greater than 0');
 SET @settingId = (SELECT LAST_INSERT_ID());
 
 INSERT INTO `application_setting_value` (`setting_id`, `value`, `language`) VALUES
-(@settingId, '200', NULL);
+(@settingId, '300', NULL);
 
 INSERT INTO `application_setting` (`name`, `label`, `description`, `type`, `required`, `order`, `category`, `module`, `language_sensitive`, `values_provider`, `check`, `check_message`) VALUES
 ('news_thumbnail_width', 'News thumbnail width', NULL, 'integer', 1, 4, @settingsCategoryId, @moduleId, NULL, NULL, 'return intval(''__value__'') > 0;', 'Value should be greater than 0');
 SET @settingId = (SELECT LAST_INSERT_ID());
 
 INSERT INTO `application_setting_value` (`setting_id`, `value`, `language`) VALUES
-(@settingId, '128', NULL);
+(@settingId, '96', NULL);
 
 INSERT INTO `application_setting` (`name`, `label`, `description`, `type`, `required`, `order`, `category`, `module`, `language_sensitive`, `values_provider`, `check`, `check_message`) VALUES
 ('news_thumbnail_height', 'News thumbnail height', NULL, 'integer', 1, 5, @settingsCategoryId, @moduleId, NULL, NULL, 'return intval(''__value__'') > 0;', 'Value should be greater than 0');
 SET @settingId = (SELECT LAST_INSERT_ID());
 
 INSERT INTO `application_setting_value` (`setting_id`, `value`, `language`) VALUES
-(@settingId, '128', NULL);
+(@settingId, '96', NULL);
 
 -- system pages
 
@@ -146,14 +146,33 @@ SET @newsWidgetSettingId = (SELECT LAST_INSERT_ID());
 INSERT INTO `page_widget_setting_default_value` (`setting_id`, `value`, `language`) VALUES
 (@newsWidgetSettingId, '1', NULL);
 
+INSERT INTO `page_widget_setting` (`name`, `widget`, `label`, `type`, `required`, `order`, `category`, `description`, `check`,  `check_message`, `values_provider`) VALUES
+('news_thumbnails_last_news', @newsLastNewsWidgetId, 'Show news thumbnails', 'checkbox', NULL, 4, 1, NULL, NULL, NULL, NULL);
+SET @newsWidgetSettingId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `page_widget_setting_default_value` (`setting_id`, `value`, `language`) VALUES
+(@newsWidgetSettingId, '1', NULL);
+
+INSERT INTO `page_widget` (`name`, `module`, `type`, `description`, `duplicate`, `forced_visibility`, `depend_page_id`) VALUES
+('newsViewWidget', @moduleId, 'public', 'View news', NULL, 1, @newsViewPageId);
+SET @newsViewNewsWidgetId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `page_system_widget_depend` (`page_id`, `widget_id`, `order`) VALUES
+(@newsViewPageId,  @newsViewNewsWidgetId,  1);
+
+INSERT INTO `page_widget_page_depend` (`page_id`, `widget_id`) VALUES
+(@newsViewPageId,  @newsViewNewsWidgetId);
+
 -- module tables
 
 CREATE TABLE IF NOT EXISTS `news_category` (
     `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(50) NOT NULL,
+    `slug` VARCHAR(100) NOT NULL,
     `language` CHAR(2) NOT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE `category_name` (`name`, `language`),
+    UNIQUE `category` (`name`, `language`),
+    UNIQUE `slug` (`slug`, `language`),
     FOREIGN KEY (`language`) REFERENCES `localization_list`(`language`)
         ON UPDATE CASCADE
         ON DELETE CASCADE

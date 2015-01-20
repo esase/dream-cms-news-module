@@ -62,21 +62,30 @@ class NewsAdministration extends NewsBase
     /**
      * Edit category
      *
-     * @param integer $categoryId
+     * @param array $category
+     *      string name
+     *      string slug optional
      * @param array $categoryInfo
      *      string name
+     *      string slug
      * @return boolean|string
      */
-    public function editCategory($categoryId, array $categoryInfo)
+    public function editCategory($category, array $categoryInfo)
     {
         try {
             $this->adapter->getDriver()->getConnection()->beginTransaction();
+
+            // generate a new slug
+            if (empty($categoryInfo['slug'])) {
+                $categoryInfo['slug'] = $this->
+                        generateSlug($category['id'], $category['name'], 'news_category', 'id', self::NEWS_CATEGORY_SLUG_LENGTH);
+            }
 
             $update = $this->update()
                 ->table('news_category')
                 ->set($categoryInfo)
                 ->where([
-                    'id' => $categoryId,
+                    'id' => $category['id'],
                     'language' => $this->getCurrentLanguage()
                 ]);
 
@@ -93,7 +102,7 @@ class NewsAdministration extends NewsBase
         }
 
         // fire the edit category event
-        NewsEvent::fireEditCategoryEvent($categoryId);
+        NewsEvent::fireEditCategoryEvent($category['id']);
         return true;
     }
 
@@ -142,6 +151,7 @@ class NewsAdministration extends NewsBase
      *
      * @param array $categoryInfo
      *      string name
+     *      string slug
      * @return boolean|string
      */
     public function addCategory(array $categoryInfo)
@@ -158,6 +168,21 @@ class NewsAdministration extends NewsBase
             $statement = $this->prepareStatementForSqlObject($insert);
             $statement->execute();
             $insertId = $this->adapter->getDriver()->getLastGeneratedValue();
+
+            // generate a slug automatically
+            if (empty($categoryInfo['slug'])) {
+                $update = $this->update()
+                    ->table('news_category')
+                    ->set([
+                        'slug' => $this->generateSlug($insertId, $categoryInfo['name'], 'news_category', 'id', self::NEWS_CATEGORY_SLUG_LENGTH)
+                    ])
+                    ->where([
+                        'id' => $insertId
+                    ]);
+
+                $statement = $this->prepareStatementForSqlObject($update);
+                $statement->execute();
+            }
 
             $this->adapter->getDriver()->getConnection()->commit();
         }
@@ -425,38 +450,6 @@ class NewsAdministration extends NewsBase
     }
 
     /**
-     * Is a category free
-     *
-     * @param string $categoryName
-     * @param integer $categoryId
-     * @return boolean
-     */
-    public function isCategoryFree($categoryName, $categoryId = 0)
-    {
-        $select = $this->select();
-        $select->from('news_category')
-            ->columns([
-                'id'
-            ])
-            ->where([
-                'name' => $categoryName,
-                'language' => $this->getCurrentLanguage()
-            ]);
-
-        if ($categoryId) {
-            $select->where([
-                new NotInPredicate('id', [$categoryId])
-            ]);
-        }
-
-        $statement = $this->prepareStatementForSqlObject($select);
-        $resultSet = new ResultSet;
-        $resultSet->initialize($statement->execute());
-
-        return $resultSet->current() ? false : true;
-    }
-
-    /**
      * Get categories
      *
      * @param integer $page
@@ -469,7 +462,8 @@ class NewsAdministration extends NewsBase
     {
         $orderFields = [
             'id',
-            'name'
+            'name',
+            'slug'
         ];
 
         $orderType = !$orderType || $orderType == 'desc'
@@ -484,7 +478,8 @@ class NewsAdministration extends NewsBase
         $select->from('news_category')
             ->columns([
                 'id',
-                'name'
+                'name',
+                'slug'
             ])
             ->where([
                 'language' => $this->getCurrentLanguage()
@@ -577,6 +572,70 @@ class NewsAdministration extends NewsBase
         $paginator->setPageRange(SettingService::getSetting('application_page_range'));
 
         return $paginator;
+    }
+
+    /**
+     * Is a category free
+     *
+     * @param string $categoryName
+     * @param integer $categoryId
+     * @return boolean
+     */
+    public function isCategoryFree($categoryName, $categoryId = 0)
+    {
+        $select = $this->select();
+        $select->from('news_category')
+            ->columns([
+                'id'
+            ])
+            ->where([
+                'name' => $categoryName,
+                'language' => $this->getCurrentLanguage()
+            ]);
+
+        if ($categoryId) {
+            $select->where([
+                new NotInPredicate('id', [$categoryId])
+            ]);
+        }
+
+        $statement = $this->prepareStatementForSqlObject($select);
+        $resultSet = new ResultSet;
+        $resultSet->initialize($statement->execute());
+
+        return $resultSet->current() ? false : true;
+    }
+
+    /**
+     * Is category slug free
+     *
+     * @param string $slug
+     * @param integer $categoryId
+     * @return boolean
+     */
+    public function isCategorySlugFree($slug, $categoryId = 0)
+    {
+        $select = $this->select();
+        $select->from('news_category')
+            ->columns([
+                'id'
+            ])
+            ->where([
+                'slug' => $slug,
+                'language' => $this->getCurrentLanguage()
+            ]);
+
+        if ($categoryId) {
+            $select->where([
+                new NotInPredicate('id', [$categoryId])
+            ]);
+        }
+
+        $statement = $this->prepareStatementForSqlObject($select);
+        $resultSet = new ResultSet;
+        $resultSet->initialize($statement->execute());
+
+        return $resultSet->current() ? false : true;
     }
 
     /**

@@ -17,6 +17,11 @@ class NewsBase extends ApplicationAbstractBase
     const NEWS_SLUG_LENGTH = 80;
 
     /**
+     * News category slug lengh
+     */
+    const NEWS_CATEGORY_SLUG_LENGTH = 80;
+
+    /**
      * Approved status
      */
     const STATUS_APPROVED = 'approved';
@@ -236,7 +241,8 @@ class NewsBase extends ApplicationAbstractBase
         $select->from('news_category')
             ->columns([
                 'id',
-                'name'
+                'name',
+                'slug'
             ])
             ->where([
                 'id' => $id
@@ -260,15 +266,18 @@ class NewsBase extends ApplicationAbstractBase
      * @param integer $id
      * @param boolean $currentLanguage
      * @param boolean $categories
+     * @param string $field
+     * @param boolean $active
      * @return array
      */
-    public function getNewsInfo($id, $currentLanguage = true, $categories = false)
+    public function getNewsInfo($id, $currentLanguage = true, $categories = false, $field = 'id', $active = false)
     {
-        $memoryKey = (int) $currentLanguage . '_' . (int) $categories;
+        // memory cache key
+        $memoryKey = implode('_', func_get_args());
 
         // check data in a memory
-        if (isset(self::$newsInfo[$id][$memoryKey])) {
-            return self::$newsInfo[$id][$memoryKey];
+        if (isset(self::$newsInfo[$memoryKey])) {
+            return self::$newsInfo[$memoryKey];
         }
 
         $select = $this->select();
@@ -288,12 +297,18 @@ class NewsBase extends ApplicationAbstractBase
                 'date_edited'
             ])
             ->where([
-                'id' => $id
+                ($field == 'id' ? $field : 'slug') => $id
             ]);
 
         if ($currentLanguage) {
             $select->where([
                 'language' => $this->getCurrentLanguage()
+            ]);
+        }
+
+        if ($active) {
+            $select->where([
+                'status' => self::STATUS_APPROVED
             ]);
         }
 
@@ -319,7 +334,7 @@ class NewsBase extends ApplicationAbstractBase
             }
         }
 
-        self::$newsInfo[$id][$memoryKey] = $news;
+        self::$newsInfo[$memoryKey] = $news;
         return $news;
     }
 }

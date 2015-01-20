@@ -11,7 +11,7 @@ class NewsWidget extends NewsBase
      *
      * @param integer $limit
      * @param integer|array $categories
-     * @return object
+     * @return array
      */
     public function getLastNews($limit, $categories = null)
     {
@@ -33,23 +33,26 @@ class NewsWidget extends NewsBase
 
         // filter by categories
         if ($categories) {
-            $select->join(
-                ['b' => 'news_category_connection'],
-                'a.id = b.news_id',
-                []
-            );
+            // check categories
+            if (null != ($existingCategories = $this->getAllCategories())) {
+                if (!is_array($categories)) {
+                    $categories = [$categories];
+                }
 
-            if (is_array($categories)) {
-                $select->where([
-                    new InPredicate('b.category_id', $categories)
-                ]);
+                // arrays diff (we can keep deleted categories in settings)
+                if (null != ($categories = array_intersect(array_keys($existingCategories), $categories))) {
+                    $select->join(
+                        ['b' => 'news_category_connection'],
+                        'a.id = b.news_id',
+                        []
+                    );
 
-                $select->group('a.id');
-            }
-            else {
-                $select->where([
-                    'b.category_id' => $categories
-                ]);
+                    $select->where([
+                        new InPredicate('b.category_id', $categories)
+                    ]);
+
+                    $select->group('a.id');
+                }
             }
         }
 
@@ -57,6 +60,39 @@ class NewsWidget extends NewsBase
         $resultSet = new ResultSet;
         $resultSet->initialize($statement->execute());
 
-        return $resultSet;
+        return $resultSet->toArray();
+    }
+
+    /**
+     * Get news categories
+     * 
+     * @param integer $newsId
+     * @return array
+     */
+    public function getNewsCategories($newsId)
+    {
+        $select = $this->select();
+        $select->from(['a' => 'news_category_connection'])
+            ->columns([
+                'category_id'
+            ])
+            ->join(
+                ['b' => 'news_category'],
+                'a.category_id = b.id',
+                [
+                    'name',
+                    'slug'                    
+                ]
+            )
+            ->where([
+                'news_id' => $newsId
+            ])
+            ->order('b.name');
+
+        $statement = $this->prepareStatementForSqlObject($select);
+        $resultSet = new ResultSet;
+        $resultSet->initialize($statement->execute());
+
+        return $resultSet->toArray();
     }
 }
