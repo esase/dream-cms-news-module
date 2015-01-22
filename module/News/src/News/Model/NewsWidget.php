@@ -3,9 +3,47 @@ namespace News\Model;
 
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Predicate\In as InPredicate;
+use Zend\Db\Sql\Expression as Expression;
 
 class NewsWidget extends NewsBase
 {
+    /**
+     * Get Calendar news
+     *
+     * @param  integer $dateStart
+     * @param  integer $dateEnd
+     * @return object
+     */
+    public function getCalendarNews($dateStart, $dateEnd)
+    {
+        $time = time();
+
+        // do not show future news
+        if ($dateEnd > $time) {
+            $dateEnd = $time;
+        }
+
+        $select = $this->select();
+        $select->from(['a' => 'news_list'])
+            ->columns([
+                'news_date' => new Expression('DATE(FROM_UNIXTIME(created))'),
+                'news_count' => new Expression('COUNT(id)')
+            ])
+            ->group('news_date')
+            ->where([
+                'a.language' => $this->getCurrentLanguage(),
+                'a.status' => self::STATUS_APPROVED
+            ])
+            ->where->greaterThanOrEqualTo('created', $dateStart)
+            ->where->lessThanOrEqualTo('created', $dateEnd);
+
+        $statement = $this->prepareStatementForSqlObject($select);
+        $resultSet = new ResultSet;
+        $resultSet->initialize($statement->execute());
+
+        return $resultSet;
+    }
+
     /**
      * Get last news
      *
@@ -24,12 +62,13 @@ class NewsWidget extends NewsBase
                 'image',
                 'created'
             ])
+            ->order('a.created desc, a.id desc')
+            ->limit($limit)
             ->where([
                 'a.language' => $this->getCurrentLanguage(),
                 'a.status' => self::STATUS_APPROVED
             ])
-            ->order('a.created desc')
-            ->limit($limit);
+            ->where->lessThanOrEqualTo('created', time());
 
         // filter by categories
         if ($categories) {

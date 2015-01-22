@@ -219,6 +219,7 @@ class NewsAdministration extends NewsBase
      *      string title
      *      string intro
      *      string text
+     *      integer created
      *      string meta_description
      *      string meta_keywords
      * @param array $categories
@@ -317,6 +318,7 @@ class NewsAdministration extends NewsBase
      *      string text
      *      string meta_description
      *      string meta_keywords
+     *      integer created optional
      * @param array $categories
      * @param array $image
      * @param boolean $approved
@@ -327,11 +329,15 @@ class NewsAdministration extends NewsBase
         try {
             $this->adapter->getDriver()->getConnection()->beginTransaction();
 
+            // check the news create date
+            if (empty($newsInfo['created'])) {
+                $newsInfo['created'] = time();
+            }
+
             $insert = $this->insert()
                 ->into('news_list')
                 ->values(array_merge($newsInfo, [
                     'status' => $approved ? self::STATUS_APPROVED : self::STATUS_DISAPPROVED,
-                    'created' => time(),
                     'language' => $this->getCurrentLanguage(),
                     'date_edited' => date('Y-m-d')
                 ]));

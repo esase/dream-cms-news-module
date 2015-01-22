@@ -115,6 +115,13 @@ class News extends ApplicationAbstractCustomForm
             'required' => false,
             'category' => 'General info',
         ],
+        'created' => [
+            'name' => 'created',
+            'type' => ApplicationCustomFormBuilder::FIELD_DATE_UNIXTIME,
+            'label' => 'Date',
+            'required' => false,
+            'category' => 'General info',
+        ],
         'image' => [
             'name' => 'image',
             'type' => ApplicationCustomFormBuilder::FIELD_IMAGE,

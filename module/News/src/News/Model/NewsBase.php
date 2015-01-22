@@ -137,9 +137,10 @@ class NewsBase extends ApplicationAbstractBase
      * Get all news
      * 
      * @param string $language
+     * @param boolean $active
      * @return object ResultSet
      */
-    public function getAllNews($language = null)
+    public function getAllNews($language = null, $active = false)
     {
         $select = $this->select();
         $select->from('news_list')
@@ -160,6 +161,13 @@ class NewsBase extends ApplicationAbstractBase
             ->where([
                 'language' => $language
             ]);
+
+        if ($active) {
+            $select->where([
+                'status' => self::STATUS_APPROVED
+            ])
+            ->where->lessThanOrEqualTo('created', time());
+        }
 
         $statement = $this->prepareStatementForSqlObject($select);
         $resultSet = new ResultSet;
@@ -309,7 +317,8 @@ class NewsBase extends ApplicationAbstractBase
         if ($active) {
             $select->where([
                 'status' => self::STATUS_APPROVED
-            ]);
+            ])
+            ->where->lessThanOrEqualTo('created', time());
         }
 
         $statement = $this->prepareStatementForSqlObject($select);

@@ -163,6 +163,9 @@ INSERT INTO `page_system_widget_depend` (`page_id`, `widget_id`, `order`) VALUES
 INSERT INTO `page_widget_page_depend` (`page_id`, `widget_id`) VALUES
 (@newsViewPageId,  @newsViewNewsWidgetId);
 
+INSERT INTO `page_widget` (`name`, `module`, `type`, `description`, `duplicate`, `forced_visibility`, `depend_page_id`) VALUES
+('newsCalendarWidget', @moduleId, 'public', 'News calendar', NULL, NULL, @newsListPageId);
+
 -- module tables
 
 CREATE TABLE IF NOT EXISTS `news_category` (
@@ -193,7 +196,7 @@ CREATE TABLE IF NOT EXISTS `news_list` (
     `date_edited` DATE NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE `slug` (`slug`, `language`),
-    KEY `news_status` (`language`, `status`),
+    KEY `news` (`language`, `status`, `created`),
     FOREIGN KEY (`language`) REFERENCES `localization_list`(`language`)
         ON UPDATE CASCADE
         ON DELETE CASCADE
