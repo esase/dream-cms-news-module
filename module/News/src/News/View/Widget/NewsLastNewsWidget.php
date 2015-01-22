@@ -18,10 +18,10 @@ class NewsLastNewsWidget extends NewsAbstractWidget
                     getWidgetSetting('news_count_last_news'), $this->getWidgetSetting('news_categories_last_news'));
 
             if (count($lastNews)) {
-                return $this->getView()->partial('news/widget/last-news', [
+                return $this->getView()->partial('news/widget/list-news', [
                     'all_news_link' => $this->getWidgetSetting('news_all_link_last_news'),
                     'show_thumbnails' => $this->getWidgetSetting('news_thumbnails_last_news'),
-                    'last_news' => $lastNews
+                    'list_news' => $lastNews
                 ]);
             }
         }

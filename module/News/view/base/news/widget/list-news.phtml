@@ -2,7 +2,7 @@
 <?php $this->dateFormat = $this->applicationSetting('news_date_format') ?>
 <?php $this->newsViewUrl = $this->pageUrl('news', [], null, true) ?>
 
-<?php foreach ($this->last_news as $news): ?>
+<?php foreach ($this->list_news as $news): ?>
     <div class="media">
         <?php if($news['image'] && $this->show_thumbnails): ?>
             <a href="<?php echo $this->url('page', ['page_name' => $this->newsViewUrl, 'slug' => $news['slug']], ['force_canonical' => true]) ?>" class="media-left">

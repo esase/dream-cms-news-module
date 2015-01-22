@@ -166,6 +166,41 @@ INSERT INTO `page_widget_page_depend` (`page_id`, `widget_id`) VALUES
 INSERT INTO `page_widget` (`name`, `module`, `type`, `description`, `duplicate`, `forced_visibility`, `depend_page_id`) VALUES
 ('newsCalendarWidget', @moduleId, 'public', 'News calendar', NULL, NULL, @newsListPageId);
 
+INSERT INTO `page_widget` (`name`, `module`, `type`, `description`, `duplicate`, `forced_visibility`, `depend_page_id`) VALUES
+('newsSimilarNewsWidget', @moduleId, 'public', 'Similar news', NULL, NULL, NULL);
+SET @newsSimilarNewsWidgetId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `page_widget_page_depend` (`page_id`, `widget_id`) VALUES
+(@newsViewPageId,  @newsSimilarNewsWidgetId);
+
+INSERT INTO `page_widget_setting` (`name`, `widget`, `label`, `type`, `required`, `order`, `category`, `description`, `check`,  `check_message`, `values_provider`) VALUES
+('news_count_similar_news', @newsSimilarNewsWidgetId, 'Count of similar news', 'integer', 1, 1, 1, NULL, 'return intval(''__value__'') > 0;', 'Value should be greater than 0', NULL);
+SET @newsWidgetSettingId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `page_widget_setting_default_value` (`setting_id`, `value`, `language`) VALUES
+(@newsWidgetSettingId, '5', NULL);
+
+INSERT INTO `page_widget_setting` (`name`, `widget`, `label`, `type`, `required`, `order`, `category`, `description`, `check`,  `check_message`, `values_provider`) VALUES
+('news_last_days_similar_news', @newsSimilarNewsWidgetId, 'Show news for the last N days', 'integer', 1, 2, 1, NULL, 'return intval(''__value__'') > 0;', 'Value should be greater than 0', NULL);
+SET @newsWidgetSettingId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `page_widget_setting_default_value` (`setting_id`, `value`, `language`) VALUES
+(@newsWidgetSettingId, '14', NULL);
+
+INSERT INTO `page_widget_setting` (`name`, `widget`, `label`, `type`, `required`, `order`, `category`, `description`, `check`,  `check_message`, `values_provider`) VALUES
+('news_all_link_similar_news', @newsSimilarNewsWidgetId, 'Show the link "View all news"', 'checkbox', NULL, 3, 1, NULL, NULL, NULL, NULL);
+SET @newsWidgetSettingId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `page_widget_setting_default_value` (`setting_id`, `value`, `language`) VALUES
+(@newsWidgetSettingId, '1', NULL);
+
+INSERT INTO `page_widget_setting` (`name`, `widget`, `label`, `type`, `required`, `order`, `category`, `description`, `check`,  `check_message`, `values_provider`) VALUES
+('news_thumbnails_similar_news', @newsSimilarNewsWidgetId, 'Show news thumbnails', 'checkbox', NULL, 4, 1, NULL, NULL, NULL, NULL);
+SET @newsWidgetSettingId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `page_widget_setting_default_value` (`setting_id`, `value`, `language`) VALUES
+(@newsWidgetSettingId, '1', NULL);
+
 -- module tables
 
 CREATE TABLE IF NOT EXISTS `news_category` (

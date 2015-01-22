@@ -4,9 +4,21 @@ namespace News\Model;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Predicate\In as InPredicate;
 use Zend\Db\Sql\Expression as Expression;
+use Zend\Db\Sql\Predicate\NotIn as NotInPredicate;
 
 class NewsWidget extends NewsBase
 {
+    /**
+     * Seconds in a day
+     */
+    CONST SECONDS_IN_DAY = 86400;
+
+    /**
+     * News categories
+     * @var array
+     */
+    protected static $newsCategories = [];
+
     /**
      * Get Calendar news
      *
@@ -42,6 +54,69 @@ class NewsWidget extends NewsBase
         $resultSet->initialize($statement->execute());
 
         return $resultSet;
+    }
+
+    /**
+     * Get similar news
+     *
+     * @param array $newsInfo
+     * @param integer $limit
+     * @param integer $lastDays
+     * @return array
+     */
+    public function getSimilarNews($newsInfo, $limit, $lastDays)
+    {
+        $dateEnd = time();
+        $dateStart = $dateEnd - self::SECONDS_IN_DAY * $lastDays;
+
+        $select = $this->select();
+        $select->from(['a' => 'news_list'])
+            ->columns([
+                'title',
+                'slug',
+                'intro',
+                'image',
+                'created'
+            ])
+            ->order(new Expression('RAND()'))
+            ->limit($limit)
+            ->where([
+                new NotInPredicate('id', [$newsInfo['id']])
+            ])
+            ->where([
+                'a.language' => $this->getCurrentLanguage(),
+                'a.status' => self::STATUS_APPROVED
+            ])
+            ->where->greaterThanOrEqualTo('a.created', $dateStart)
+            ->where->lessThanOrEqualTo('a.created', $dateEnd);
+
+        // get news categories
+        if (null != ($newsCategories = $this->getNewsCategories($newsInfo['id']))) {
+            // proccess categories
+            $processedCategories = [];
+
+            foreach($newsCategories as $category) {
+                $processedCategories[] = $category['category_id'];
+            }
+
+            $select->join(
+                ['b' => 'news_category_connection'],
+                'a.id = b.news_id',
+                []
+            );
+
+            $select->where([
+                new InPredicate('b.category_id', $processedCategories)
+            ]);
+
+            $select->group('a.id');
+        }
+
+        $statement = $this->prepareStatementForSqlObject($select);
+        $resultSet = new ResultSet;
+        $resultSet->initialize($statement->execute());
+
+        return $resultSet->toArray();
     }
 
     /**
@@ -110,6 +185,10 @@ class NewsWidget extends NewsBase
      */
     public function getNewsCategories($newsId)
     {
+        if (isset(self::$newsCategories[$newsId])) {
+            return self::$newsCategories[$newsId];
+        }
+
         $select = $this->select();
         $select->from(['a' => 'news_category_connection'])
             ->columns([
@@ -132,6 +211,7 @@ class NewsWidget extends NewsBase
         $resultSet = new ResultSet;
         $resultSet->initialize($statement->execute());
 
-        return $resultSet->toArray();
+        self::$newsCategories[$newsId] = $resultSet->toArray();
+        return self::$newsCategories[$newsId];
     }
 }
