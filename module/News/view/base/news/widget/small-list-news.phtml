@@ -1,0 +1,20 @@
+<?php $this->declareVars('dateFormat', 'newsViewUrl', 'newsListUrl') ?>
+<?php $this->dateFormat = $this->applicationSetting('news_date_format') ?>
+<?php $this->newsViewUrl = $this->pageUrl('news', [], null, true) ?>
+
+<?php foreach ($this->list_news as $news): ?>
+    <?php echo $this->partial('news/partial/_news-unit', 
+            array_merge(['data' => $news], ['show_thumbnails' => $this->show_thumbnails])) ?>
+<?php endforeach ?>
+
+<?php if($this->all_news_link): ?>
+    <?php $this->newsListUrl = $this->pageUrl('news-list') ?>
+    <?php if(false !== ($this->newsListUrl)): ?>
+        <hr />
+        <p>
+            <a href="<?php echo $this->url('page', ['page_name' => $this->newsListUrl], ['force_canonical' => true]) ?>">
+                <?php echo $this->translate('View all news') ?>
+            </a>
+        </p>
+    <?php endif ?>
+<?php endif ?>

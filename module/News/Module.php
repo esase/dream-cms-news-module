@@ -68,7 +68,8 @@ class Module
                 'newsLastNewsWidget' => 'News\View\Widget\NewsLastNewsWidget',
                 'newsViewWidget' => 'News\View\Widget\NewsViewWidget',
                 'newsCalendarWidget' => 'News\View\Widget\NewsCalendarWidget',
-                'newsSimilarNewsWidget' => 'News\View\Widget\NewsSimilarNewsWidget'
+                'newsSimilarNewsWidget' => 'News\View\Widget\NewsSimilarNewsWidget',
+                'newsListWidget' => 'News\View\Widget\NewsListWidget'
             ],
             'factories' => [
                 'newsImageUrl' => function(){

@@ -201,6 +201,15 @@ SET @newsWidgetSettingId = (SELECT LAST_INSERT_ID());
 INSERT INTO `page_widget_setting_default_value` (`setting_id`, `value`, `language`) VALUES
 (@newsWidgetSettingId, '1', NULL);
 
+-- TODO: Hide this widget from other pages
+
+INSERT INTO `page_widget` (`name`, `module`, `type`, `description`, `duplicate`, `forced_visibility`, `depend_page_id`) VALUES
+('newsListWidget', @moduleId, 'public', 'News list', NULL, 1, @newsViewPageId);
+SET @newsListNewsWidgetId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `page_system_widget_depend` (`page_id`, `widget_id`, `order`) VALUES
+(@newsListPageId,  @newsListNewsWidgetId,  1);
+
 -- module tables
 
 CREATE TABLE IF NOT EXISTS `news_category` (
