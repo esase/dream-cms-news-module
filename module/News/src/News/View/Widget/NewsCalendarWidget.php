@@ -31,20 +31,36 @@ class NewsCalendarWidget extends NewsAbstractWidget
                 $calendar->setYear($year);
             }
 
+            $categoryFilter = $this->isNewsListPage() 
+                ? $this->getRouteParam('category') 
+                : null;
+
             // get calendar news
             if (null != ($news = $this->getModel()->
-                    getCalendarNews($calendar->getStartDate(), $calendar->getEndDate()))) {
+                    getCalendarNews($calendar->getStartDate(), $calendar->getEndDate(), $categoryFilter))) {
 
                 $calendarLinks = [];
-                $pageName = $this->getView()->pageUrl('news-list');
+                $pageName = $this->getView()->pageUrl(self::NEWS_LIST_PAGE);
 
+                $routeParams  = [];
+                $routeQueries = [];
+
+                // save all router params and queries on the 'news-list' page
+                if ($this->isNewsListPage()) {
+                    $routeParams = $this->getView()->applicationRoute()->getAllDefaultRouteParams();
+                    $routeQueries = $this->getView()->applicationRoute()->getQuery();
+                }
+
+                // process list of news
                 foreach ($news as $newsInfo) {
-                    $calendarLinks[$newsInfo->news_date] = [
-                        'title' => sprintf($this->getView()->
-                                translatePlural('count one news', 'count many news', $newsInfo->news_count), $newsInfo->news_count),
+                    $date = str_replace('-', '/', $newsInfo->news_date);
+                    $title = sprintf($this->getView()->
+                            translatePlural('count one news', 'count many news', $newsInfo->news_count), $newsInfo->news_count);
 
-                        'url' => $this->getView()->url('page', ['page_name' => $pageName, 
-                                'date' => str_replace('-', '/', $newsInfo->news_date)], ['force_canonical' => true])
+                    $calendarLinks[$newsInfo->news_date] = [
+                        'title' => $title,
+                        'url' => $this->getView()->url('page', array_merge($routeParams, 
+                                ['page_name' => $pageName, 'date' => $date]), ['force_canonical' => true, 'query' => $routeQueries])
                     ];
                 }
 

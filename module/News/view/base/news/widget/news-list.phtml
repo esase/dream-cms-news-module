@@ -1,3 +1,14 @@
-<div id="news-list" class="relative-wrapper">
+<div id="<?php echo $this->escapeHtmlAttr($this->news_wrapper) ?>" class="relative-wrapper">
     <?php echo $this->data ?>
 </div>
+<?php if($this->all_news_link): ?>
+    <?php $this->newsListUrl = $this->pageUrl('news-list') ?>
+    <?php if(false !== $this->newsListUrl): ?>
+        <hr />
+        <p>
+            <a href="<?php echo $this->url('page', ['page_name' => $this->newsListUrl], ['force_canonical' => true]) ?>">
+                <?php echo $this->translate('View all news') ?>
+            </a>
+        </p>
+    <?php endif ?>
+<?php endif ?>

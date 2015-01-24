@@ -1,8 +1,6 @@
 <?php
 namespace News\View\Widget;
 
-use Acl\Service\Acl as AclService;
-
 class NewsSimilarNewsWidget extends NewsAbstractWidget
 {
     /**
@@ -17,9 +15,9 @@ class NewsSimilarNewsWidget extends NewsAbstractWidget
                 getWidgetSetting('news_count_similar_news'), (int) $this->getWidgetSetting('news_last_days_similar_news'));
 
         if (count($similarNews)) {
-            return $this->getView()->partial('news/widget/small-list-news', [
-                'all_news_link' => $this->getWidgetSetting('news_all_link_similar_news'),
-                'show_thumbnails' => $this->getWidgetSetting('news_thumbnails_similar_news'),
+            return $this->getView()->partial('news/widget/limited-list-news', [
+                'all_news_link' => (int) $this->getWidgetSetting('news_all_link_similar_news'),
+                'show_thumbnails' => (int) $this->getWidgetSetting('news_thumbnails_similar_news'),
                 'list_news' => $similarNews
             ]);
         }

@@ -130,11 +130,8 @@ INSERT INTO `page_widget` (`name`, `module`, `type`, `description`, `duplicate`,
 SET @newsLastNewsWidgetId = (SELECT LAST_INSERT_ID());
 
 INSERT INTO `page_widget_setting` (`name`, `widget`, `label`, `type`, `required`, `order`, `category`, `description`, `check`,  `check_message`, `values_provider`) VALUES
-('news_count_last_news', @newsLastNewsWidgetId, 'Count of last news', 'integer', 1, 1, 1, NULL, 'return intval(''__value__'') > 0;', 'Value should be greater than 0', NULL);
+('news_count_last_news', @newsLastNewsWidgetId, 'Count of last news', 'integer', NULL, 1, 1, NULL, 'return intval(''__value__'') > 0;', 'Value should be greater than 0', NULL);
 SET @newsWidgetSettingId = (SELECT LAST_INSERT_ID());
-
-INSERT INTO `page_widget_setting_default_value` (`setting_id`, `value`, `language`) VALUES
-(@newsWidgetSettingId, '5', NULL);
 
 INSERT INTO `page_widget_setting` (`name`, `widget`, `label`, `type`, `required`, `order`, `category`, `description`, `check`,  `check_message`, `values_provider`) VALUES
 ('news_categories_last_news', @newsLastNewsWidgetId, 'Categories', 'multiselect', NULL, 2, 1, NULL, NULL, NULL, 'return News\\Service\\News::getAllNewsCategories();');
@@ -201,14 +198,48 @@ SET @newsWidgetSettingId = (SELECT LAST_INSERT_ID());
 INSERT INTO `page_widget_setting_default_value` (`setting_id`, `value`, `language`) VALUES
 (@newsWidgetSettingId, '1', NULL);
 
--- TODO: Hide this widget from other pages
-
 INSERT INTO `page_widget` (`name`, `module`, `type`, `description`, `duplicate`, `forced_visibility`, `depend_page_id`) VALUES
 ('newsListWidget', @moduleId, 'public', 'News list', NULL, 1, @newsViewPageId);
 SET @newsListNewsWidgetId = (SELECT LAST_INSERT_ID());
 
 INSERT INTO `page_system_widget_depend` (`page_id`, `widget_id`, `order`) VALUES
 (@newsListPageId,  @newsListNewsWidgetId,  1);
+
+INSERT INTO `page_widget_page_depend` (`page_id`, `widget_id`) VALUES
+(@newsListPageId,  @newsListNewsWidgetId);
+
+INSERT INTO `page_widget_setting` (`name`, `widget`, `label`, `type`, `required`, `order`, `category`, `description`, `check`,  `check_message`, `values_provider`) VALUES
+('news_thumbnails_list_news', @newsListNewsWidgetId, 'Show news thumbnails', 'checkbox', NULL, 1, 1, NULL, NULL, NULL, NULL);
+SET @newsWidgetSettingId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `page_widget_setting_default_value` (`setting_id`, `value`, `language`) VALUES
+(@newsWidgetSettingId, '1', NULL);
+
+INSERT INTO `page_widget_setting` (`name`, `widget`, `label`, `type`, `required`, `order`, `category`, `description`, `check`,  `check_message`, `values_provider`) VALUES
+('news_sorting_menu_list_news', @newsListNewsWidgetId, 'Show the sorting menu', 'checkbox', NULL, 2, 1, NULL, NULL, NULL, NULL);
+SET @newsWidgetSettingId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `page_widget_setting_default_value` (`setting_id`, `value`, `language`) VALUES
+(@newsWidgetSettingId, '1', NULL);
+
+INSERT INTO `page_widget_setting` (`name`, `widget`, `label`, `type`, `required`, `order`, `category`, `description`, `check`,  `check_message`, `values_provider`) VALUES
+('news_perpage_menu_list_news', @newsListNewsWidgetId, 'Show menu select the number of results per page', 'checkbox', NULL, 3, 1, NULL, NULL, NULL, NULL);
+SET @newsWidgetSettingId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `page_widget_setting_default_value` (`setting_id`, `value`, `language`) VALUES
+(@newsWidgetSettingId, '1', NULL);
+
+INSERT INTO `page_widget_setting` (`name`, `widget`, `label`, `type`, `required`, `order`, `category`, `description`, `check`,  `check_message`, `values_provider`) VALUES
+('news_filter_list_news', @newsListNewsWidgetId, 'Show the filter menu', 'checkbox', NULL, 4, 1, NULL, NULL, NULL, NULL);
+SET @newsWidgetSettingId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `page_widget` (`name`, `module`, `type`, `description`, `duplicate`, `forced_visibility`, `depend_page_id`) VALUES
+('newsCategoriesWidget', @moduleId, 'public', 'News categories', NULL, NULL, @newsListPageId);
+SET @newsCategoriesNewsWidgetId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `page_widget_page_depend` (`page_id`, `widget_id`) VALUES
+(@newsListPageId,  @newsCategoriesNewsWidgetId),
+(@newsViewPageId,  @newsCategoriesNewsWidgetId);
 
 -- module tables
 

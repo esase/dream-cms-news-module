@@ -9,6 +9,7 @@ use Zend\Db\Sql\Expression as Expression;
 use Zend\Db\Sql\Predicate\NotIn as NotInPredicate;
 use Zend\Paginator\Adapter\DbSelect as DbSelectPaginator;
 use Zend\Paginator\Paginator;
+use Zend\Db\Sql\Predicate\Like as LikePredicate;
 
 class NewsWidget extends NewsBase
 {
@@ -33,6 +34,7 @@ class NewsWidget extends NewsBase
      * @param array $filters
      *      integer category
      *      string date
+     *      string title
      * @return object
      */
     public function getNewsList($page = 1, $perPage = 0, $orderBy = null, $orderType = null, array $filters = [])
@@ -82,9 +84,17 @@ class NewsWidget extends NewsBase
 
         // filter by a created date
         if (!empty($filters['date'])) {
-            $date = strtotime($filters['date']);
-            $select->where->greaterThanOrEqualTo('created', $date);
-            $select->where->lessThanOrEqualTo('created', $date);
+            list($dateStart, $dateEnd) = $this->getDateRange($filters['date']);
+
+            $select->where->greaterThanOrEqualTo('created', $dateStart);
+            $select->where->lessThanOrEqualTo('created', $dateEnd);
+        }
+
+        // filter by title
+        if (!empty($filters['title'])) {
+            $select->where([
+                new LikePredicate('a.title', '%' . $filters['title'] . '%')
+            ]);
         }
 
         $paginator = new Paginator(new DbSelectPaginator($select, $this->adapter));
@@ -96,13 +106,68 @@ class NewsWidget extends NewsBase
     }
 
     /**
+     * Get categories
+     *
+     * @param string $date
+     * @return object
+     */
+    public function getCategories($date = null)
+    {
+        // filter by a created date
+        $newsFilter = new Expression('b.news_id = c.id and c.status = ? and c.created <= ?', [
+            self::STATUS_APPROVED, time()
+        ]);
+
+        if ($date) {
+            list($dateStart, $dateEnd) = $this->getDateRange($date);
+
+            $newsFilter = new Expression('b.news_id = c.id and c.status = ? and c.created <= ? and c.created >= ? and c.created <= ?', [
+                self::STATUS_APPROVED, time(), $dateStart, $dateEnd
+            ]);
+        }
+
+        $select = $this->select();
+        $select->from(['a' => 'news_category'])
+            ->columns([
+                'name',
+                'slug'
+            ])
+            ->join(
+                ['b' => 'news_category_connection'],
+                'a.id = b.category_id',
+                [],
+                'left'
+            )
+            ->join(
+                ['c' => 'news_list'],
+                $newsFilter,
+                [
+                    'news_count' => new Expression('COUNT(c.id)')
+                ],
+                'left'
+            )
+            ->where([
+                'a.language' => $this->getCurrentLanguage()
+            ])
+            ->group('a.id')
+            ->order('a.name');
+
+        $statement = $this->prepareStatementForSqlObject($select);
+        $resultSet = new ResultSet;
+        $resultSet->initialize($statement->execute());
+
+        return $resultSet;
+    }
+
+    /**
      * Get Calendar news
      *
      * @param  integer $dateStart
      * @param  integer $dateEnd
+     * @param  string $category
      * @return object
      */
-    public function getCalendarNews($dateStart, $dateEnd)
+    public function getCalendarNews($dateStart, $dateEnd, $category = null)
     {
         $time = time();
 
@@ -115,7 +180,7 @@ class NewsWidget extends NewsBase
         $select->from(['a' => 'news_list'])
             ->columns([
                 'news_date' => new Expression('DATE(FROM_UNIXTIME(created))'),
-                'news_count' => new Expression('COUNT(id)')
+                'news_count' => new Expression('COUNT(a.id)')
             ])
             ->group('news_date')
             ->where([
@@ -124,6 +189,20 @@ class NewsWidget extends NewsBase
             ])
             ->where->greaterThanOrEqualTo('created', $dateStart)
             ->where->lessThanOrEqualTo('created', $dateEnd);
+
+        // filter by a category
+        if ($category) {
+            $select->join(
+                ['b' => 'news_category_connection'],
+                'a.id = b.news_id',
+                []
+            )
+            ->join(
+                ['c' => 'news_category'],
+                new Expression('c.id = b.category_id and c.slug = ?', [$category]),
+                []
+            );
+        }
 
         $statement = $this->prepareStatementForSqlObject($select);
         $resultSet = new ResultSet;
@@ -198,11 +277,12 @@ class NewsWidget extends NewsBase
     /**
      * Get last news
      *
-     * @param integer $limit
+     * @param integer $page
      * @param integer|array $categories
-     * @return array
+     * @param integer $limit
+     * @return array|object
      */
-    public function getLastNews($limit, $categories = null)
+    public function getLastNews($page, $categories = null, $limit = null)
     {
         $select = $this->select();
         $select->from(['a' => 'news_list'])
@@ -214,7 +294,6 @@ class NewsWidget extends NewsBase
                 'created'
             ])
             ->order('a.created desc, a.id desc')
-            ->limit($limit)
             ->where([
                 'a.language' => $this->getCurrentLanguage(),
                 'a.status' => self::STATUS_APPROVED
@@ -246,11 +325,22 @@ class NewsWidget extends NewsBase
             }
         }
 
-        $statement = $this->prepareStatementForSqlObject($select);
-        $resultSet = new ResultSet;
-        $resultSet->initialize($statement->execute());
+        if ($limit) {
+            $select->limit($limit);
+        
+            $statement = $this->prepareStatementForSqlObject($select);
+            $resultSet = new ResultSet;
+            $resultSet->initialize($statement->execute());
 
-        return $resultSet->toArray();
+            return $resultSet->toArray();
+        }
+
+        $paginator = new Paginator(new DbSelectPaginator($select, $this->adapter));
+        $paginator->setCurrentPageNumber($page);
+        $paginator->setItemCountPerPage(PaginationUtility::processPerPage(null));
+        $paginator->setPageRange(SettingService::getSetting('application_page_range'));
+
+        return $paginator;
     }
 
     /**

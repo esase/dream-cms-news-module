@@ -1,5 +1,4 @@
-<?php $this->declareVars('dateFormat', 'newsListUrl') ?>
-<?php $this->dateFormat = $this->applicationSetting('news_date_format') ?>
+<?php $this->declareVars('newsListUrl') ?>
 <?php $this->newsListUrl = $this->pageUrl('news-list') ?>
 
 <!-- include needed js and css files -->
@@ -17,7 +16,7 @@
     <p>
         <strong>
             <time datetime="<?php echo $this->escapeHtmlAttr(date('Y-m-d H:m'), $news['created']) ?>">
-                <?php echo $this->escapeHtml($this->applicationDate($news['created'], ['format' => $this->dateFormat])) ?>
+                <?php echo $this->escapeHtml($this->applicationDate($news['created'], ['format' => $this->applicationSetting('news_date_format')])) ?>
             </time>
         </strong>
         <?php echo $this->escapeHtml($news['intro']) ?>
