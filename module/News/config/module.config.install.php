@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'version' => '1.0.0',
+    'version' => '1.0.1',
     'vendor' => 'eSASe',
     'vendor_email' => 'alexermashev@gmail.com',
     'description' => 'Module allows to publish news on the site',
