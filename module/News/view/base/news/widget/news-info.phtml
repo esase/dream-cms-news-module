@@ -1,0 +1,37 @@
+<?php $this->declareVars('newsListUrl') ?>
+<?php $this->newsListUrl = $this->pageUrl('news-list') ?>
+
+<!-- include needed js and css files -->
+<?php $this->layoutHeadLink()->appendStylesheet($this->layoutAsset('main.css', 'css', 'news')) ?>
+
+<?php if (!$this->localization()->isCurrentLanguageLtr()): ?>
+    <?php $this->layoutHeadLink()->appendStylesheet($this->layoutAsset('main.rtl.css', 'css', 'news')) ?>
+<?php endif ?>
+
+<div id="preview-news">
+    <?php if ($news['image']): ?>
+        <img id="preview-image" alt="<?php echo $this->escapeHtmlAttr($news['title']) ?>" src="<?php echo $this->escapeHtmlAttr($this->newsImageUrl($news['image'], false)) ?>" />
+    <?php endif ?>
+    <h4><?php echo $this->escapeHtml($news['title']) ?></h4>
+    <p>
+        <strong>
+            <time datetime="<?php echo $this->escapeHtmlAttr(date('Y-m-d H:m'), $news['created']) ?>">
+                <?php echo $this->escapeHtml($this->applicationDate($news['created'], ['format' => $this->applicationSetting('news_date_format')])) ?>
+            </time>
+        </strong>
+        <?php echo $this->escapeHtml($news['intro']) ?>
+    </p>
+    <?php echo $news['text'] ?>
+    <?php if(!empty($this->categories)): ?>
+        <p>
+            <strong><?php echo $this->translate('Categories') ?>:</strong>
+            <?php foreach ($this->categories as $category): ?>
+                <?php if (false == $this->newsListUrl): ?>
+                    <?php echo $this->escapeHtml($category['name']) ?>
+                <?php else: ?>
+                    <a href="<?php echo $this->url('page', ['page_name' => $this->newsListUrl, 'category' => $category['slug']], ['force_canonical' => true]) ?>"><?php echo $this->escapeHtml($category['name']) ?></a>
+                <?php endif ?>
+            <?php endforeach ?>
+        </p>
+    <?php endif ?>
+</div>

@@ -1,0 +1,22 @@
+<div class="media">
+    <?php if($this->data['image'] && $this->show_thumbnails): ?>
+        <a href="<?php echo $this->url('page', ['page_name' => $this->pageUrl('news', [], null, true), 'slug' => $this->data['slug']], ['force_canonical' => true]) ?>" class="media-left">
+            <img alt="<?php echo $this->escapeHtmlAttr($this->data['title']) ?>" src="<?php echo $this->escapeHtmlAttr($this->newsImageUrl($this->data['image'])) ?>" />
+        </a>
+    <?php endif ?>
+    <div class="media-body">
+        <h4 class="media-heading">
+            <a href="<?php echo $this->url('page', ['page_name' => $this->pageUrl('news', [], null, true), 'slug' => $this->data['slug']], ['force_canonical' => true]) ?>">
+                <?php echo $this->escapeHtml($this->data['title']) ?>
+            </a>
+        </h4>
+        <p>
+            <strong>
+                <time datetime="<?php echo $this->escapeHtmlAttr(date('Y-m-d H:m'), $this->data['created']) ?>">
+                    <?php echo $this->escapeHtml($this->applicationDate($this->data['created'], ['format' => $this->applicationSetting('news_date_format')])) ?>
+                </time>
+            </strong>
+            <?php echo $this->escapeHtml($this->data['intro']) ?>
+        </p>
+    </div>
+</div>

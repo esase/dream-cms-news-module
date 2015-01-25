@@ -13,6 +13,11 @@ class NewsCategory extends ApplicationAbstractCustomForm
     const CATEGORY_NAME_MAX_LENGTH = 50;
 
     /**
+     * Slug max string length
+     */
+    const SLUG_MAX_LENGTH = 100;
+
+    /**
      * Form name
      * @var string
      */
@@ -42,6 +47,14 @@ class NewsCategory extends ApplicationAbstractCustomForm
             'required' => true,
             'max_length' => self::CATEGORY_NAME_MAX_LENGTH
         ],
+        'slug' => [
+            'name' => 'slug',
+            'type' => ApplicationCustomFormBuilder::FIELD_SLUG,
+            'label' => 'Display name',
+            'required' => false,
+            'max_length' => self::SLUG_MAX_LENGTH,
+            'description' => 'The display name will be displayed in the browser bar'
+        ],
         'submit' => [
             'name' => 'submit',
             'type' => ApplicationCustomFormBuilder::FIELD_SUBMIT,
@@ -65,6 +78,16 @@ class NewsCategory extends ApplicationAbstractCustomForm
                     'options' => [
                         'callback' => [$this, 'validateCategoryName'],
                         'message' => 'Category already exists'
+                    ]
+                ]
+            ];
+
+            $this->formElements['slug']['validators'] = [
+                [
+                    'name' => 'callback',
+                    'options' => [
+                        'callback' => [$this, 'validateSlug'],
+                        'message' => 'Display name already used'
                     ]
                 ]
             ];
@@ -98,6 +121,18 @@ class NewsCategory extends ApplicationAbstractCustomForm
     {
         $this->categoryId = $categoryId;
         return $this;
+    }
+
+    /**
+     * Validate slug
+     *
+     * @param $value
+     * @param array $context
+     * @return boolean
+     */
+    public function validateSlug($value, array $context = [])
+    {
+        return $this->model->isCategorySlugFree($value, $this->categoryId);
     }
 
     /**

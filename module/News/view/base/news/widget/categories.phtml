@@ -1,0 +1,12 @@
+<ul class="list-group">
+    <?php foreach($this->categories as $category): ?>
+        <li class="list-group-item<?php if ($this->category == $category->slug): ?> disabled<?php endif ?>">
+            <?php if ($category->news_count): ?>
+                <span class="badge"><?php echo $this->escapeHtml($category->news_count) ?></span>
+            <?php endif ?>
+            <a href="<?php echo $this->url('page', array_merge($this->route_params, ['category' => $category->slug]), ['force_canonical' => true, 'query' => $this->route_queries]) ?>">
+                <?php echo $this->escapeHtml($category->name) ?>
+            </a>
+        </li>
+    <?php endforeach ?>
+</ul>

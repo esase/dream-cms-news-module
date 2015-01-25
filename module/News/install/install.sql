@@ -1,6 +1,9 @@
 SET sql_mode='STRICT_TRANS_TABLES,NO_ZERO_DATE,NO_ZERO_IN_DATE';
 
 SET @moduleId = __module_id__;
+
+-- application admin menu
+
 SET @maxOrder = (SELECT `order` + 1 FROM `application_admin_menu` ORDER BY `order` DESC LIMIT 1);
 
 INSERT INTO `application_admin_menu_category` (`name`, `module`, `icon`) VALUES
@@ -13,6 +16,8 @@ INSERT INTO `application_admin_menu` (`name`, `controller`, `action`, `module`, 
 ('List of news', 'news-administration', 'list', @moduleId, @maxOrder, @menuCategoryId, @menuPartId),
 ('List of categories', 'news-administration', 'list-categories', @moduleId, @maxOrder + 1, @menuCategoryId, @menuPartId),
 ('Settings', 'news-administration', 'settings', @moduleId, @maxOrder + 2, @menuCategoryId, @menuPartId);
+
+-- acl resources
 
 INSERT INTO `acl_resource` (`resource`, `description`, `module`) VALUES
 ('news_administration_list', 'ACL - Viewing news in admin area', @moduleId),
@@ -27,6 +32,16 @@ INSERT INTO `acl_resource` (`resource`, `description`, `module`) VALUES
 ('news_administration_approve_news', 'ACL - Approving news in admin area', @moduleId),
 ('news_administration_disapprove_news', 'ACL - Disapproving news in admin area', @moduleId);
 
+INSERT INTO `acl_resource` (`resource`, `description`, `module`) VALUES
+('news_view_news', 'ACL - Viewing news', @moduleId);
+SET @viewNewsResourceId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `acl_resource_connection` (`role`, `resource`) VALUES
+(3, @viewNewsResourceId),
+(2, @viewNewsResourceId);
+
+-- application events
+
 INSERT INTO `application_event` (`name`, `module`, `description`) VALUES
 ('news_add_category', @moduleId, 'Event - Adding news categories'),
 ('news_delete_category', @moduleId, 'Event - Deleting news categories'),
@@ -36,6 +51,8 @@ INSERT INTO `application_event` (`name`, `module`, `description`) VALUES
 ('news_delete', @moduleId, 'Event - Deleting news'),
 ('news_approve', @moduleId, 'Event - Approving news'),
 ('news_disapprove', @moduleId, 'Event - Disapproving news');
+
+-- application settings
 
 INSERT INTO `application_setting_category` (`name`, `module`) VALUES
 ('Main settings', @moduleId);
@@ -70,35 +87,170 @@ INSERT INTO `application_setting` (`name`, `label`, `description`, `type`, `requ
 SET @settingId = (SELECT LAST_INSERT_ID());
 
 INSERT INTO `application_setting_value` (`setting_id`, `value`, `language`) VALUES
-(@settingId, '200', NULL);
+(@settingId, '300', NULL);
 
 INSERT INTO `application_setting` (`name`, `label`, `description`, `type`, `required`, `order`, `category`, `module`, `language_sensitive`, `values_provider`, `check`, `check_message`) VALUES
 ('news_image_height', 'News image height', NULL, 'integer', 1, 4, @settingsCategoryId, @moduleId, NULL, NULL, 'return intval(''__value__'') > 0;', 'Value should be greater than 0');
 SET @settingId = (SELECT LAST_INSERT_ID());
 
 INSERT INTO `application_setting_value` (`setting_id`, `value`, `language`) VALUES
-(@settingId, '200', NULL);
+(@settingId, '300', NULL);
 
 INSERT INTO `application_setting` (`name`, `label`, `description`, `type`, `required`, `order`, `category`, `module`, `language_sensitive`, `values_provider`, `check`, `check_message`) VALUES
 ('news_thumbnail_width', 'News thumbnail width', NULL, 'integer', 1, 4, @settingsCategoryId, @moduleId, NULL, NULL, 'return intval(''__value__'') > 0;', 'Value should be greater than 0');
 SET @settingId = (SELECT LAST_INSERT_ID());
 
 INSERT INTO `application_setting_value` (`setting_id`, `value`, `language`) VALUES
-(@settingId, '64', NULL);
+(@settingId, '96', NULL);
 
 INSERT INTO `application_setting` (`name`, `label`, `description`, `type`, `required`, `order`, `category`, `module`, `language_sensitive`, `values_provider`, `check`, `check_message`) VALUES
 ('news_thumbnail_height', 'News thumbnail height', NULL, 'integer', 1, 5, @settingsCategoryId, @moduleId, NULL, NULL, 'return intval(''__value__'') > 0;', 'Value should be greater than 0');
 SET @settingId = (SELECT LAST_INSERT_ID());
 
 INSERT INTO `application_setting_value` (`setting_id`, `value`, `language`) VALUES
-(@settingId, '64', NULL);
+(@settingId, '96', NULL);
+
+-- system pages
+
+INSERT INTO `page_system` (`slug`, `title`, `module`, `disable_menu`, `privacy`, `forced_visibility`, `disable_user_menu`, `disable_site_map`, `disable_footer_menu`, `disable_seo`, `disable_xml_map`, `pages_provider`) VALUES
+('news', 'View news', @moduleId, 1, 'News\\PagePrivacy\\NewsViewPrivacy', NULL, 1, NULL, 1, 1, NULL, 'News\\PageProvider\\NewsPageProvider');
+SET @newsViewPageId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `page_system` (`slug`, `title`, `module`, `disable_menu`, `privacy`, `forced_visibility`, `disable_user_menu`, `disable_site_map`, `disable_footer_menu`, `disable_seo`, `disable_xml_map`, `pages_provider`) VALUES
+('news-list', 'News list', @moduleId,  NULL, 'News\\PagePrivacy\\NewsListPrivacy', NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+SET @newsListPageId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `page_system_page_depend` (`page_id`, `depend_page_id`) VALUES
+(@newsViewPageId, 1),
+(@newsListPageId, 1),
+(@newsListPageId, @newsViewPageId);
+
+INSERT INTO `page_widget` (`name`, `module`, `type`, `description`, `duplicate`, `forced_visibility`, `depend_page_id`) VALUES
+('newsLastNewsWidget', @moduleId, 'public', 'Last news', 1, NULL, @newsViewPageId);
+SET @newsLastNewsWidgetId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `page_widget_setting` (`name`, `widget`, `label`, `type`, `required`, `order`, `category`, `description`, `check`,  `check_message`, `values_provider`) VALUES
+('news_count_last_news', @newsLastNewsWidgetId, 'Count of last news', 'integer', NULL, 1, 1, NULL, 'return intval(''__value__'') > 0;', 'Value should be greater than 0', NULL);
+SET @newsWidgetSettingId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `page_widget_setting` (`name`, `widget`, `label`, `type`, `required`, `order`, `category`, `description`, `check`,  `check_message`, `values_provider`) VALUES
+('news_categories_last_news', @newsLastNewsWidgetId, 'Categories', 'multiselect', NULL, 2, 1, NULL, NULL, NULL, 'return News\\Service\\News::getAllNewsCategories();');
+
+INSERT INTO `page_widget_setting` (`name`, `widget`, `label`, `type`, `required`, `order`, `category`, `description`, `check`,  `check_message`, `values_provider`) VALUES
+('news_all_link_last_news', @newsLastNewsWidgetId, 'Show the link "View all news"', 'checkbox', NULL, 3, 1, NULL, NULL, NULL, NULL);
+SET @newsWidgetSettingId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `page_widget_setting_default_value` (`setting_id`, `value`, `language`) VALUES
+(@newsWidgetSettingId, '1', NULL);
+
+INSERT INTO `page_widget_setting` (`name`, `widget`, `label`, `type`, `required`, `order`, `category`, `description`, `check`,  `check_message`, `values_provider`) VALUES
+('news_thumbnails_last_news', @newsLastNewsWidgetId, 'Show news thumbnails', 'checkbox', NULL, 4, 1, NULL, NULL, NULL, NULL);
+SET @newsWidgetSettingId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `page_widget_setting_default_value` (`setting_id`, `value`, `language`) VALUES
+(@newsWidgetSettingId, '1', NULL);
+
+INSERT INTO `page_widget` (`name`, `module`, `type`, `description`, `duplicate`, `forced_visibility`, `depend_page_id`) VALUES
+('newsViewWidget', @moduleId, 'public', 'View news', NULL, 1, @newsViewPageId);
+SET @newsViewNewsWidgetId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `page_system_widget_depend` (`page_id`, `widget_id`, `order`) VALUES
+(@newsViewPageId,  @newsViewNewsWidgetId,  1);
+
+INSERT INTO `page_widget_page_depend` (`page_id`, `widget_id`) VALUES
+(@newsViewPageId,  @newsViewNewsWidgetId);
+
+INSERT INTO `page_widget` (`name`, `module`, `type`, `description`, `duplicate`, `forced_visibility`, `depend_page_id`) VALUES
+('newsCalendarWidget', @moduleId, 'public', 'News calendar', NULL, NULL, @newsListPageId);
+
+INSERT INTO `page_widget` (`name`, `module`, `type`, `description`, `duplicate`, `forced_visibility`, `depend_page_id`) VALUES
+('newsSimilarNewsWidget', @moduleId, 'public', 'Similar news', NULL, NULL, NULL);
+SET @newsSimilarNewsWidgetId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `page_widget_page_depend` (`page_id`, `widget_id`) VALUES
+(@newsViewPageId,  @newsSimilarNewsWidgetId);
+
+INSERT INTO `page_widget_setting` (`name`, `widget`, `label`, `type`, `required`, `order`, `category`, `description`, `check`,  `check_message`, `values_provider`) VALUES
+('news_count_similar_news', @newsSimilarNewsWidgetId, 'Count of similar news', 'integer', 1, 1, 1, NULL, 'return intval(''__value__'') > 0;', 'Value should be greater than 0', NULL);
+SET @newsWidgetSettingId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `page_widget_setting_default_value` (`setting_id`, `value`, `language`) VALUES
+(@newsWidgetSettingId, '5', NULL);
+
+INSERT INTO `page_widget_setting` (`name`, `widget`, `label`, `type`, `required`, `order`, `category`, `description`, `check`,  `check_message`, `values_provider`) VALUES
+('news_last_days_similar_news', @newsSimilarNewsWidgetId, 'Show news for the last N days', 'integer', 1, 2, 1, NULL, 'return intval(''__value__'') > 0;', 'Value should be greater than 0', NULL);
+SET @newsWidgetSettingId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `page_widget_setting_default_value` (`setting_id`, `value`, `language`) VALUES
+(@newsWidgetSettingId, '14', NULL);
+
+INSERT INTO `page_widget_setting` (`name`, `widget`, `label`, `type`, `required`, `order`, `category`, `description`, `check`,  `check_message`, `values_provider`) VALUES
+('news_all_link_similar_news', @newsSimilarNewsWidgetId, 'Show the link "View all news"', 'checkbox', NULL, 3, 1, NULL, NULL, NULL, NULL);
+SET @newsWidgetSettingId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `page_widget_setting_default_value` (`setting_id`, `value`, `language`) VALUES
+(@newsWidgetSettingId, '1', NULL);
+
+INSERT INTO `page_widget_setting` (`name`, `widget`, `label`, `type`, `required`, `order`, `category`, `description`, `check`,  `check_message`, `values_provider`) VALUES
+('news_thumbnails_similar_news', @newsSimilarNewsWidgetId, 'Show news thumbnails', 'checkbox', NULL, 4, 1, NULL, NULL, NULL, NULL);
+SET @newsWidgetSettingId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `page_widget_setting_default_value` (`setting_id`, `value`, `language`) VALUES
+(@newsWidgetSettingId, '1', NULL);
+
+INSERT INTO `page_widget` (`name`, `module`, `type`, `description`, `duplicate`, `forced_visibility`, `depend_page_id`) VALUES
+('newsListWidget', @moduleId, 'public', 'News list', NULL, 1, @newsViewPageId);
+SET @newsListNewsWidgetId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `page_system_widget_depend` (`page_id`, `widget_id`, `order`) VALUES
+(@newsListPageId,  @newsListNewsWidgetId,  1);
+
+INSERT INTO `page_widget_page_depend` (`page_id`, `widget_id`) VALUES
+(@newsListPageId,  @newsListNewsWidgetId);
+
+INSERT INTO `page_widget_setting` (`name`, `widget`, `label`, `type`, `required`, `order`, `category`, `description`, `check`,  `check_message`, `values_provider`) VALUES
+('news_thumbnails_list_news', @newsListNewsWidgetId, 'Show news thumbnails', 'checkbox', NULL, 1, 1, NULL, NULL, NULL, NULL);
+SET @newsWidgetSettingId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `page_widget_setting_default_value` (`setting_id`, `value`, `language`) VALUES
+(@newsWidgetSettingId, '1', NULL);
+
+INSERT INTO `page_widget_setting` (`name`, `widget`, `label`, `type`, `required`, `order`, `category`, `description`, `check`,  `check_message`, `values_provider`) VALUES
+('news_sorting_menu_list_news', @newsListNewsWidgetId, 'Show the sorting menu', 'checkbox', NULL, 2, 1, NULL, NULL, NULL, NULL);
+SET @newsWidgetSettingId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `page_widget_setting_default_value` (`setting_id`, `value`, `language`) VALUES
+(@newsWidgetSettingId, '1', NULL);
+
+INSERT INTO `page_widget_setting` (`name`, `widget`, `label`, `type`, `required`, `order`, `category`, `description`, `check`,  `check_message`, `values_provider`) VALUES
+('news_perpage_menu_list_news', @newsListNewsWidgetId, 'Show menu select the number of results per page', 'checkbox', NULL, 3, 1, NULL, NULL, NULL, NULL);
+SET @newsWidgetSettingId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `page_widget_setting_default_value` (`setting_id`, `value`, `language`) VALUES
+(@newsWidgetSettingId, '1', NULL);
+
+INSERT INTO `page_widget_setting` (`name`, `widget`, `label`, `type`, `required`, `order`, `category`, `description`, `check`,  `check_message`, `values_provider`) VALUES
+('news_filter_list_news', @newsListNewsWidgetId, 'Show the filter menu', 'checkbox', NULL, 4, 1, NULL, NULL, NULL, NULL);
+SET @newsWidgetSettingId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `page_widget` (`name`, `module`, `type`, `description`, `duplicate`, `forced_visibility`, `depend_page_id`) VALUES
+('newsCategoriesWidget', @moduleId, 'public', 'News categories', NULL, NULL, @newsListPageId);
+SET @newsCategoriesNewsWidgetId = (SELECT LAST_INSERT_ID());
+
+INSERT INTO `page_widget_page_depend` (`page_id`, `widget_id`) VALUES
+(@newsListPageId,  @newsCategoriesNewsWidgetId),
+(@newsViewPageId,  @newsCategoriesNewsWidgetId);
+
+-- module tables
 
 CREATE TABLE IF NOT EXISTS `news_category` (
     `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(50) NOT NULL,
+    `slug` VARCHAR(100) NOT NULL,
     `language` CHAR(2) NOT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE `category_name` (`name`, `language`),
+    UNIQUE `category` (`name`, `language`),
+    UNIQUE `slug` (`slug`, `language`),
     FOREIGN KEY (`language`) REFERENCES `localization_list`(`language`)
         ON UPDATE CASCADE
         ON DELETE CASCADE
@@ -106,7 +258,7 @@ CREATE TABLE IF NOT EXISTS `news_category` (
 
 CREATE TABLE IF NOT EXISTS `news_list` (
     `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `title` VARCHAR(50) NOT NULL,
+    `title` VARCHAR(150) NOT NULL,
     `slug` VARCHAR(100) NOT NULL,
     `intro` VARCHAR(255) NOT NULL,
     `text` TEXT NOT NULL,
@@ -119,7 +271,7 @@ CREATE TABLE IF NOT EXISTS `news_list` (
     `date_edited` DATE NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE `slug` (`slug`, `language`),
-    KEY `news_status` (`language`, `status`),
+    KEY `news` (`language`, `status`, `created`),
     FOREIGN KEY (`language`) REFERENCES `localization_list`(`language`)
         ON UPDATE CASCADE
         ON DELETE CASCADE

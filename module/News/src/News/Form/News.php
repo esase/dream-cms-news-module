@@ -13,7 +13,7 @@ class News extends ApplicationAbstractCustomForm
     /**
      * Title max string length
      */
-    const TITLE_MAX_LENGTH = 50;
+    const TITLE_MAX_LENGTH = 150;
 
     /**
      * Slug max string length
@@ -112,6 +112,13 @@ class News extends ApplicationAbstractCustomForm
             'name' => 'categories',
             'type' => ApplicationCustomFormBuilder::FIELD_MULTI_SELECT,
             'label' => 'Categories',
+            'required' => false,
+            'category' => 'General info',
+        ],
+        'created' => [
+            'name' => 'created',
+            'type' => ApplicationCustomFormBuilder::FIELD_DATE_UNIXTIME,
+            'label' => 'Date',
             'required' => false,
             'category' => 'General info',
         ],

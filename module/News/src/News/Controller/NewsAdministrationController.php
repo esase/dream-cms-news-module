@@ -410,7 +410,7 @@ class NewsAdministrationController extends ApplicationAbstractAdministrationCont
 
                 // edit the category
                 if (true === ($result = $this->
-                        getModel()->editCategory($category['id'], $categoryForm->getForm()->getData()))) {
+                        getModel()->editCategory($category, $categoryForm->getForm()->getData()))) {
 
                     $this->flashMessenger()
                         ->setNamespace('success')

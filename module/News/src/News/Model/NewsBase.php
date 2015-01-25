@@ -17,6 +17,11 @@ class NewsBase extends ApplicationAbstractBase
     const NEWS_SLUG_LENGTH = 80;
 
     /**
+     * News category slug lengh
+     */
+    const NEWS_CATEGORY_SLUG_LENGTH = 80;
+
+    /**
      * Approved status
      */
     const STATUS_APPROVED = 'approved';
@@ -37,6 +42,18 @@ class NewsBase extends ApplicationAbstractBase
      * @var string
      */
     protected static $thumbnailsDir = 'news/thumbnail/';
+
+    /**
+     * News info
+     * @var array
+     */
+    protected static $newsInfo = [];
+
+    /**
+     * All categories
+     * @var array
+     */
+    protected static $allCategories = null;
 
     /**
      * Get images directory name
@@ -88,7 +105,9 @@ class NewsBase extends ApplicationAbstractBase
      */
     public function getAllCategories()
     {
-        $categories = [];
+        if (null !== self::$allCategories) {
+            return self::$allCategories;
+        }
 
         $select = $this->select();
         $select->from('news_category')
@@ -106,20 +125,22 @@ class NewsBase extends ApplicationAbstractBase
         $resultSet->initialize($statement->execute());
 
         // process categories
+        self::$allCategories = [];
         foreach ($resultSet as $category) {
-            $categories[$category->id] = $category->name;
+            self::$allCategories[$category->id] = $category->name;
         }
 
-        return $categories;
+        return self::$allCategories;
     }
 
     /**
      * Get all news
      * 
      * @param string $language
+     * @param boolean $active
      * @return object ResultSet
      */
-    public function getAllNews($language = null)
+    public function getAllNews($language = null, $active = false)
     {
         $select = $this->select();
         $select->from('news_list')
@@ -140,6 +161,13 @@ class NewsBase extends ApplicationAbstractBase
             ->where([
                 'language' => $language
             ]);
+
+        if ($active) {
+            $select->where([
+                'status' => self::STATUS_APPROVED
+            ])
+            ->where->lessThanOrEqualTo('created', time());
+        }
 
         $statement = $this->prepareStatementForSqlObject($select);
         $resultSet = new ResultSet;
@@ -221,7 +249,8 @@ class NewsBase extends ApplicationAbstractBase
         $select->from('news_category')
             ->columns([
                 'id',
-                'name'
+                'name',
+                'slug'
             ])
             ->where([
                 'id' => $id
@@ -245,10 +274,20 @@ class NewsBase extends ApplicationAbstractBase
      * @param integer $id
      * @param boolean $currentLanguage
      * @param boolean $categories
+     * @param string $field
+     * @param boolean $active
      * @return array
      */
-    public function getNewsInfo($id, $currentLanguage = true, $categories = false)
+    public function getNewsInfo($id, $currentLanguage = true, $categories = false, $field = 'id', $active = false)
     {
+        // memory cache key
+        $memoryKey = implode('_', func_get_args());
+
+        // check data in a memory
+        if (isset(self::$newsInfo[$memoryKey])) {
+            return self::$newsInfo[$memoryKey];
+        }
+
         $select = $this->select();
         $select->from('news_list')
             ->columns([
@@ -266,13 +305,20 @@ class NewsBase extends ApplicationAbstractBase
                 'date_edited'
             ])
             ->where([
-                'id' => $id
+                ($field == 'id' ? $field : 'slug') => $id
             ]);
 
         if ($currentLanguage) {
             $select->where([
                 'language' => $this->getCurrentLanguage()
             ]);
+        }
+
+        if ($active) {
+            $select->where([
+                'status' => self::STATUS_APPROVED
+            ])
+            ->where->lessThanOrEqualTo('created', time());
         }
 
         $statement = $this->prepareStatementForSqlObject($select);
@@ -297,6 +343,7 @@ class NewsBase extends ApplicationAbstractBase
             }
         }
 
+        self::$newsInfo[$memoryKey] = $news;
         return $news;
     }
 }

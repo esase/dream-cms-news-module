@@ -12,7 +12,7 @@ class NewsFilter extends ApplicationAbstractCustomForm
      * Form name
      * @var string
      */
-    protected $formName = 'filter';
+    protected $formName = 'news-filter';
 
     /**
      * Form method
@@ -25,6 +25,12 @@ class NewsFilter extends ApplicationAbstractCustomForm
      * @var array
      */
     protected $notValidatedElements = ['submit'];
+
+    /**
+     * Simple mode
+     * @var boolean
+     */
+    protected $simpleMode = false;
 
     /**
      * Form elements
@@ -67,12 +73,18 @@ class NewsFilter extends ApplicationAbstractCustomForm
     {
         // get form builder
         if (!$this->form) {
-            // get list news categories
-            $categories = NewsService::getAllNewsCategories();
-            $this->formElements['categories']['values'] = $categories;
+            if (!$this->simpleMode) {
+                // get list news categories
+                $categories = NewsService::getAllNewsCategories();
+                $this->formElements['categories']['values'] = $categories;
 
-            if (!$categories) {
+                if (!$categories) {
+                    unset($this->formElements['categories']);
+                }
+            }
+            else {
                 unset($this->formElements['categories']);
+                unset($this->formElements['status']);
             }
 
             $this->form = new ApplicationCustomFormBuilder($this->formName,
@@ -80,5 +92,16 @@ class NewsFilter extends ApplicationAbstractCustomForm
         }
 
         return $this->form;
+    }
+
+    /**
+     * Set simple mode
+     *
+     * @return object NewsFilter
+     */
+    public function setSimpleMode()
+    {
+        $this->simpleMode = true;
+        return $this;
     }
 }
