@@ -49,6 +49,15 @@ class NewsCalendarWidget extends NewsAbstractWidget
                 if ($this->isNewsListPage()) {
                     $routeParams = $this->getView()->applicationRoute()->getAllDefaultRouteParams();
                     $routeQueries = $this->getView()->applicationRoute()->getQuery();
+
+                    // remove this widget's specific params from queries
+                    $routeQueries = array_merge($routeQueries, [
+                        'month' => null,
+                        'year' => null,
+                        'widget_connection' => null,
+                        'widget_position' => null,
+                        '_' => null
+                    ]);
                 }
 
                 // process list of news
