@@ -1,7 +1,7 @@
 <div id="<?php echo $this->escapeHtmlAttr($this->news_wrapper) ?>" class="relative-wrapper">
     <?php echo $this->data ?>
 </div>
-<?php if((!empty($this->base_filters['category']) || !empty($this->base_filters['date']))): ?>
+<?php if((!empty($this->base_filters['category']) || !empty($this->base_filters['date']) || $this->all_news_link)): ?>
     <?php $this->newsListUrl = $this->pageUrl('news-list') ?>
     <?php if(false !== $this->newsListUrl): ?>
         <hr />

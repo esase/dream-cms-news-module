@@ -77,7 +77,8 @@ class NewsListWidget extends NewsAbstractWidget
         return $this->getView()->partial('news/widget/news-list', [
             'news_wrapper' => 'news-list',
             'data' => $dataList,
-            'base_filters' => $baseFilters
+            'base_filters' => $baseFilters,
+            'news_count' => $paginator->count()
         ]);
     }
 }
