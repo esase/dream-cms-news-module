@@ -29,7 +29,9 @@ class NewsCategoriesWidget extends NewsAbstractWidget
         }
 
         // get categories
-        if (null != ($categories = $this->getModel()->getCategories($dateFilter))) {
+        $categories = $this->getModel()->getCategories($dateFilter);
+
+        if (count($categories)) {            
             return $this->getView()->partial('news/widget/categories', [
                 'category' => $this->isNewsListPage() 
                     ? $this->getRouteParam('category') 
