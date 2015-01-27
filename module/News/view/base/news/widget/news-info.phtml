@@ -1,13 +1,6 @@
 <?php $this->declareVars('newsListUrl') ?>
 <?php $this->newsListUrl = $this->pageUrl('news-list') ?>
 
-<!-- include needed js and css files -->
-<?php $this->layoutHeadLink()->appendStylesheet($this->layoutAsset('main.css', 'css', 'news')) ?>
-
-<?php if (!$this->localization()->isCurrentLanguageLtr()): ?>
-    <?php $this->layoutHeadLink()->appendStylesheet($this->layoutAsset('main.rtl.css', 'css', 'news')) ?>
-<?php endif ?>
-
 <div id="preview-news">
     <?php if ($news['image']): ?>
         <img id="preview-image" alt="<?php echo $this->escapeHtmlAttr($news['title']) ?>" src="<?php echo $this->escapeHtmlAttr($this->newsImageUrl($news['image'], false)) ?>" />
