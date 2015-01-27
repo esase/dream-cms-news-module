@@ -6,6 +6,20 @@ use Acl\Service\Acl as AclService;
 class NewsViewWidget extends NewsAbstractWidget
 {
     /**
+     * Include js and css files
+     *
+     * @return void
+     */
+    public function includeJsCssFiles()
+    {
+        $this->getView()->layoutHeadLink()->appendStylesheet($this->getView()->layoutAsset('main.css', 'css', 'news'));
+
+        if (!$this->getView()->localization()->isCurrentLanguageLtr()) {
+            $this->getView()->layoutHeadLink()->appendStylesheet($this->getView()->layoutAsset('main.rtl.css', 'css', 'news'));
+        }
+    }
+
+    /**
      * Get widget content
      *
      * @return string|boolean
