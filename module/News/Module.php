@@ -14,7 +14,7 @@ class Module
     public function init(ModuleManagerInterface $moduleManager)
     {
         $eventManager = LocalizationEvent::getEventManager();
-        $eventManager->attach(LocalizationEvent::DELETE, function ($e) use ($moduleManager) {
+        $eventManager->attach(LocalizationEvent::UNINSTALL, function ($e) use ($moduleManager) {
             $news = $moduleManager->getEvent()->getParam('ServiceManager')
                 ->get('Application\Model\ModelManager')
                 ->getInstance('News\Model\NewsBase');
