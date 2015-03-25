@@ -2,7 +2,7 @@
 
 return [
     'compatable' => '2.2.x',
-    'version' => '1.0.3',
+    'version' => '1.0.4',
     'vendor' => 'eSASe',
     'vendor_email' => 'alexermashev@gmail.com',
     'description' => 'Module allows to publish news on the site',
