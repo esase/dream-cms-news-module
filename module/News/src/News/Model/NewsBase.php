@@ -160,7 +160,8 @@ class NewsBase extends ApplicationAbstractBase
             ])
             ->where([
                 'language' => $language
-            ]);
+            ])
+            ->order('created desc, id desc');
 
         if ($active) {
             $select->where([
