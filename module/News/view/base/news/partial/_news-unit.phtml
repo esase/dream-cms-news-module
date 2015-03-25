@@ -12,7 +12,7 @@
         </h4>
         <p>
             <strong>
-                <time datetime="<?php echo $this->escapeHtmlAttr(date('Y-m-d H:m'), $this->data['created']) ?>">
+                <time datetime="<?php echo $this->escapeHtmlAttr(date('Y-m-d H:i', $this->data['created'])) ?>">
                     <?php echo $this->escapeHtml($this->applicationDate($this->data['created'], ['format' => $this->applicationSetting('news_date_format')])) ?>
                 </time>
             </strong>
