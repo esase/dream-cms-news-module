@@ -1,12 +1,14 @@
 <?php
 namespace News\Model;
 
+use Application\Utility\ApplicationSlug as SlugUtility;
 use Application\Utility\ApplicationErrorLogger;
 use Application\Utility\ApplicationFileSystem as FileSystemUtility;
 use Application\Model\ApplicationAbstractBase;
 use News\Event\NewsEvent;
 use News\Exception\NewsException;
 use Zend\Db\ResultSet\ResultSet;
+use Zend\Db\Sql\Predicate\NotIn as NotInPredicate;
 use Exception;
 
 class NewsBase extends ApplicationAbstractBase
@@ -346,5 +348,59 @@ class NewsBase extends ApplicationAbstractBase
 
         self::$newsInfo[$memoryKey] = $news;
         return $news;
+    }
+
+    /**
+     * Generate slug
+     *
+     * @param integer $objectId
+     * @param string $title
+     * @param string $table
+     * @param string $idField
+     * @param integer $slugLength
+     * @param array $filters
+     * @param string $slugField
+     * @param string $spaceDevider
+     * @return string
+     */
+    public function generateSlug($objectId, $title, $table, $idField, $slugLength = 60, array $filters = [], $slugField = 'slug', $spaceDevider = '-')
+    {
+        // generate a slug
+        $newSlug  = $slug = SlugUtility::slugify($title, $slugLength, $spaceDevider);
+        $slagSalt = null;
+
+        while (true) {
+            // check the slug existent
+            $select = $this->select();
+            $select->from($table)
+                ->columns([
+                    $slugField
+                ])
+                ->where([
+                    $slugField => $newSlug,
+                    'language' => $this->getCurrentLanguage()                    
+                ] + $filters);
+
+            $select->where([
+                new NotInPredicate($idField, [$objectId])
+            ]);
+
+            $statement = $this->prepareStatementForSqlObject($select);
+            $resultSet = new ResultSet;
+            $resultSet->initialize($statement->execute());
+
+            // generated slug not found
+            if (!$resultSet->current()) {
+                break;
+            }
+            else {
+                $newSlug = $objectId . $spaceDevider . $slug . $slagSalt;
+            }
+
+            // add an extra slug
+            $slagSalt = $spaceDevider . SlugUtility::generateRandomSlug($this->slugLength); // add a salt
+        }
+
+        return $newSlug;
     }
 }
