@@ -112,12 +112,12 @@ INSERT INTO `application_setting_value` (`setting_id`, `value`, `language`) VALU
 
 -- system pages
 
-INSERT INTO `page_system` (`slug`, `title`, `module`, `disable_menu`, `privacy`, `forced_visibility`, `disable_user_menu`, `disable_site_map`, `disable_footer_menu`, `disable_seo`, `disable_xml_map`, `pages_provider`) VALUES
-('news', 'View news', @moduleId, 1, 'News\\PagePrivacy\\NewsViewPrivacy', NULL, 1, NULL, 1, 1, NULL, 'News\\PageProvider\\NewsPageProvider');
+INSERT INTO `page_system` (`slug`, `title`, `module`, `disable_menu`, `privacy`, `forced_visibility`, `disable_user_menu`, `disable_site_map`, `disable_footer_menu`, `disable_seo`, `disable_xml_map`, `pages_provider`, `dynamic_page`) VALUES
+('news', 'View news', @moduleId, 1, 'News\\PagePrivacy\\NewsViewPrivacy', NULL, 1, NULL, 1, 1, NULL, 'News\\PageProvider\\NewsPageProvider', 1);
 SET @newsViewPageId = (SELECT LAST_INSERT_ID());
 
-INSERT INTO `page_system` (`slug`, `title`, `module`, `disable_menu`, `privacy`, `forced_visibility`, `disable_user_menu`, `disable_site_map`, `disable_footer_menu`, `disable_seo`, `disable_xml_map`, `pages_provider`) VALUES
-('news-list', 'News list', @moduleId,  NULL, 'News\\PagePrivacy\\NewsListPrivacy', NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `page_system` (`slug`, `title`, `module`, `disable_menu`, `privacy`, `forced_visibility`, `disable_user_menu`, `disable_site_map`, `disable_footer_menu`, `disable_seo`, `disable_xml_map`, `pages_provider`, `dynamic_page`) VALUES
+('news-list', 'News list', @moduleId,  NULL, 'News\\PagePrivacy\\NewsListPrivacy', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 SET @newsListPageId = (SELECT LAST_INSERT_ID());
 
 INSERT INTO `page_system_page_depend` (`page_id`, `depend_page_id`) VALUES
