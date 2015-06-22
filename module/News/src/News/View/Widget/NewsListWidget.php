@@ -63,7 +63,8 @@ class NewsListWidget extends NewsAbstractWidget
             'paginator_per_page_show' => (int) $this->getWidgetSetting('news_perpage_menu_list_news'),
             'unit' => 'news/partial/_news-unit',
             'unit_params' => [
-                'show_thumbnails' => (int) $this->getWidgetSetting('news_thumbnails_list_news')
+                'show_thumbnails' => (int) $this->getWidgetSetting('news_thumbnails_list_news'),
+                'show_link' => $this->getView()->pageUrl('news', [], null, true)
             ],
             'per_page' => $perPage,
             'order_by' => $orderBy,

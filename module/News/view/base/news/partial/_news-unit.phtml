@@ -1,14 +1,24 @@
 <div class="media">
     <?php if($this->data['image'] && $this->show_thumbnails): ?>
-        <a href="<?php echo $this->url('page', ['page_name' => $this->pageUrl('news', [], null, true), 'slug' => $this->data['slug']], ['force_canonical' => true]) ?>" class="media-left">
-            <img alt="<?php echo $this->escapeHtmlAttr($this->data['title']) ?>" src="<?php echo $this->escapeHtmlAttr($this->newsImageUrl($this->data['image'])) ?>" />
-        </a>
+        <?php if ($this->show_link): ?>
+            <a href="<?php echo $this->url('page', ['page_name' => $this->pageUrl('news', [], null, true), 'slug' => $this->data['slug']], ['force_canonical' => true]) ?>" class="media-left">
+                <img alt="<?php echo $this->escapeHtmlAttr($this->data['title']) ?>" src="<?php echo $this->escapeHtmlAttr($this->newsImageUrl($this->data['image'])) ?>" />
+            </a>
+        <?php else: ?>
+            <a onclick="return false;" href="javascript:void(0);" class="media-left">
+                <img alt="<?php echo $this->escapeHtmlAttr($this->data['title']) ?>" src="<?php echo $this->escapeHtmlAttr($this->newsImageUrl($this->data['image'])) ?>" />
+            </a>
+        <?php endif ?>
     <?php endif ?>
     <div class="media-body">
         <h4 class="media-heading">
-            <a href="<?php echo $this->url('page', ['page_name' => $this->pageUrl('news', [], null, true), 'slug' => $this->data['slug']], ['force_canonical' => true]) ?>">
+            <?php if ($this->show_link): ?>
+                <a href="<?php echo $this->url('page', ['page_name' => $this->pageUrl('news', [], null, true), 'slug' => $this->data['slug']], ['force_canonical' => true]) ?>">
+                    <?php echo $this->escapeHtml($this->data['title']) ?>
+                </a>
+            <?php else: ?>
                 <?php echo $this->escapeHtml($this->data['title']) ?>
-            </a>
+            <?php endif ?>
         </h4>
         <p>
             <strong>

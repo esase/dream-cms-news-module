@@ -25,7 +25,9 @@ class NewsLastNewsWidget extends NewsAbstractWidget
     public function getContent() 
     {
         // check a permission
-        if (AclService::checkPermission('news_view_news', false)) {
+        if (AclService::checkPermission('news_view_news', false) 
+                && false !== $this->getView()->pageUrl('news', [], null, true)) {
+
             // get widget settings
             $this->newsCategories = $this->getWidgetSetting('news_categories_last_news');
             $this->newsCount      = (int) $this->getWidgetSetting('news_count_last_news');
@@ -63,7 +65,8 @@ class NewsLastNewsWidget extends NewsAbstractWidget
                 'paginator_page_query' => $pageParamName,
                 'unit' => 'news/partial/_news-unit',
                 'unit_params' => [
-                    'show_thumbnails' => (int) $this->getWidgetSetting('news_thumbnails_last_news')
+                    'show_thumbnails' => (int) $this->getWidgetSetting('news_thumbnails_last_news'),
+                    'show_link' => $this->getView()->pageUrl('news', [], null, true)
                 ]
             ]);
 
@@ -72,7 +75,9 @@ class NewsLastNewsWidget extends NewsAbstractWidget
             }
 
             return $this->getView()->partial('news/widget/news-list', [
-                'all_news_link' => (int) $this->getWidgetSetting('news_all_link_last_news'),
+                'all_news_link' => (int) $this->getWidgetSetting('news_all_link_last_news') 
+                        && false !== $this->getView()->pageUrl('news-list'),
+
                 'news_wrapper' => $newsWrapperId,
                 'data' => $dataList
             ]);
@@ -95,6 +100,7 @@ class NewsLastNewsWidget extends NewsAbstractWidget
             return $this->getView()->partial('news/widget/limited-list-news', [
                 'all_news_link' => $this->getWidgetSetting('news_all_link_last_news'),
                 'show_thumbnails' => $this->getWidgetSetting('news_thumbnails_last_news'),
+                'show_link' => $this->getView()->pageUrl('news', [], null, true),
                 'list_news' => $lastNews
             ]);
         }

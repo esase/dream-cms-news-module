@@ -2,7 +2,7 @@
 
 <?php foreach ($this->list_news as $news): ?>
     <?php echo $this->partial('news/partial/_news-unit', 
-            array_merge(['data' => $news], ['show_thumbnails' => $this->show_thumbnails])) ?>
+            array_merge(['data' => $news], ['show_thumbnails' => $this->show_thumbnails, 'show_link' => $this->show_link])) ?>
 <?php endforeach ?>
 
 <?php if($this->all_news_link): ?>
