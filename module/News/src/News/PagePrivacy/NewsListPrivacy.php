@@ -3,7 +3,6 @@ namespace News\PagePrivacy;
 
 use Acl\Service\Acl as AclService;
 use Page\PagePrivacy\PageAbstractPagePrivacy;
-use Application\Service\ApplicationServiceLocator as ServiceLocatorService;
 
 class NewsListPrivacy extends PageAbstractPagePrivacy
 {
