@@ -3,6 +3,7 @@ namespace News\PagePrivacy;
 
 use Acl\Service\Acl as AclService;
 use Page\PagePrivacy\PageAbstractPagePrivacy;
+use Application\Service\ApplicationServiceLocator as ServiceLocatorService;
 
 class NewsListPrivacy extends PageAbstractPagePrivacy
 {
@@ -15,7 +16,7 @@ class NewsListPrivacy extends PageAbstractPagePrivacy
      */
     public function isAllowedViewPage(array $privacyOptions = [], $trustedData = false)
     {
-        // check a permission
+         // check a permission
         if (!AclService::checkPermission('news_view_news', false)) {
             return false;
         }
