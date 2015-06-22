@@ -40,7 +40,7 @@ return [
         ]
     ],
     'install_sql' => __DIR__ . '/../install/install.sql',
-    'install_intro' => null,
+    'install_intro' => 'news_install_intro',
     'uninstall_sql' => __DIR__ . '/../install/uninstall.sql',
     'uninstall_intro' => null,
     'layout_path' => 'news'
