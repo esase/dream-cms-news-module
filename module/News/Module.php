@@ -24,36 +24,9 @@ namespace News;
 
 use Application\Service\Application as ApplicationService;
 use News\Model\NewsBase as NewsBaseModel;
-use Localization\Event\LocalizationEvent;
-use Zend\ModuleManager\ModuleManagerInterface;
 
 class Module
 {
-    /**
-     * Init
-     *
-     * @param \Zend\ModuleManager\ModuleManagerInterface $moduleManager
-     * @return void
-     */
-    public function init(ModuleManagerInterface $moduleManager)
-    {
-        // TODO: move it in the  delete service
-        $eventManager = LocalizationEvent::getEventManager();
-        $eventManager->attach(LocalizationEvent::UNINSTALL, function ($e) use ($moduleManager) {
-            $news = $moduleManager->getEvent()->getParam('ServiceManager')
-                ->get('Application\Model\ModelManager')
-                ->getInstance('News\Model\NewsBase');
-
-            // delete a language dependent news
-            if (null != ($newsList = $news->getAllNews($e->getParam('object_id')))) {
-                // process news list
-                foreach ($newsList as $newsInfo) {
-                    $news->deleteNews((array) $newsInfo);
-                }
-            }
-        });
-    }
-
     /**
      * Return auto loader config array
      *

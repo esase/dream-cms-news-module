@@ -161,6 +161,40 @@ class NewsBase extends ApplicationAbstractBase
     }
 
     /**
+     * Get unused news
+     *
+     * @param integer $limit
+     * @return array
+     */
+    public function getUnusedNews($limit)
+    {
+        $select = $this->select();
+        $select->from('news_list')
+            ->columns([
+                'id',
+                'title',
+                'slug',
+                'intro',
+                'text',
+                'status',
+                'image',
+                'meta_description',
+                'meta_keywords',
+                'created',
+                'language',
+                'date_edited'
+            ])
+            ->limit($limit)
+            ->where->and->isNull('language');
+
+        $statement = $this->prepareStatementForSqlObject($select);
+        $resultSet = new ResultSet;
+        $resultSet->initialize($statement->execute());
+
+        return $resultSet->toArray();
+    }
+
+    /**
      * Get all news
      * 
      * @param string $language
