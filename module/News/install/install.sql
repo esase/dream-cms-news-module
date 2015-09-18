@@ -241,6 +241,10 @@ INSERT INTO `page_widget_page_depend` (`page_id`, `widget_id`) VALUES
 (@newsListPageId,  @newsCategoriesNewsWidgetId),
 (@newsViewPageId,  @newsCategoriesNewsWidgetId);
 
+-- delete content service integration
+INSERT INTO `application_delete_content_service` (`path`, `module`) VALUES
+('\\News\\DeleteContentHandler\\NewsHandler', @moduleId);
+
 -- module tables
 
 CREATE TABLE IF NOT EXISTS `news_category` (
@@ -267,14 +271,14 @@ CREATE TABLE IF NOT EXISTS `news_list` (
     `meta_description` VARCHAR(150) DEFAULT NULL,
     `meta_keywords` VARCHAR(150) DEFAULT NULL,
     `created` INT(10) UNSIGNED NOT NULL,
-    `language` CHAR(2) NOT NULL,
+    `language` CHAR(2) DEFAULT NULL,
     `date_edited` DATE NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE `slug` (`slug`, `language`),
     KEY `news` (`language`, `status`, `created`),
     FOREIGN KEY (`language`) REFERENCES `localization_list`(`language`)
         ON UPDATE CASCADE
-        ON DELETE CASCADE
+        ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `news_category_connection` (

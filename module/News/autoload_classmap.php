@@ -43,5 +43,6 @@ return [
     'News\View\Widget\NewsListWidget'              => __DIR__ . '/src/News/View/Widget/NewsListWidget.php',
     'News\View\Widget\NewsSimilarNewsWidget'       => __DIR__ . '/src/News/View/Widget/NewsSimilarNewsWidget.php',
     'News\View\Widget\NewsViewWidget'              => __DIR__ . '/src/News/View/Widget/NewsViewWidget.php',
-    'News\Test\NewsBootstrap'                      => __DIR__ . '/test/Bootstrap.php'
+    'News\Test\NewsBootstrap'                      => __DIR__ . '/test/Bootstrap.php',
+    'News\DeleteContentHandler\NewsHandler'        => __DIR__ . '/src/News/DeleteContentHandler/NewsHandler.php'
 ];
