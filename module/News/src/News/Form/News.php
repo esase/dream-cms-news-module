@@ -1,4 +1,25 @@
 <?php
+
+/**
+ * EXHIBIT A. Common Public Attribution License Version 1.0
+ * The contents of this file are subject to the Common Public Attribution License Version 1.0 (the “License”);
+ * you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ * http://www.dream-cms.kg/en/license. The License is based on the Mozilla Public License Version 1.1
+ * but Sections 14 and 15 have been added to cover use of software over a computer network and provide for
+ * limited attribution for the Original Developer. In addition, Exhibit A has been modified to be consistent
+ * with Exhibit B. Software distributed under the License is distributed on an “AS IS” basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the specific language
+ * governing rights and limitations under the License. The Original Code is Dream CMS software.
+ * The Initial Developer of the Original Code is Dream CMS (http://www.dream-cms.kg).
+ * All portions of the code written by Dream CMS are Copyright (c) 2014. All Rights Reserved.
+ * EXHIBIT B. Attribution Information
+ * Attribution Copyright Notice: Copyright 2014 Dream CMS. All rights reserved.
+ * Attribution Phrase (not exceeding 10 words): Powered by Dream CMS software
+ * Attribution URL: http://www.dream-cms.kg/
+ * Graphic Image as provided in the Covered Code.
+ * Display of Attribution Information is required in Larger Works which are defined in the CPAL as a work
+ * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
+ */
 namespace News\Form;
 
 use Application\Service\Application as ApplicationService;
@@ -6,9 +27,8 @@ use Application\Form\ApplicationAbstractCustomForm;
 use Application\Form\ApplicationCustomFormBuilder;
 use News\Model\NewsAdministration as NewsAdministrationModel;
 use News\Service\News as NewsService;
-use News\Model\NewsBase as NewsBaseModel;
 
-class News extends ApplicationAbstractCustomForm 
+class News extends ApplicationAbstractCustomForm
 {
     /**
      * Title max string length
@@ -42,36 +62,42 @@ class News extends ApplicationAbstractCustomForm
 
     /**
      * Form name
+     *
      * @var string
      */
     protected $formName = 'news';
 
     /**
      * List of ignored elements
+     *
      * @var array
      */
     protected $ignoredElements = ['image', 'categories'];
 
     /**
      * Model instance
-     * @var object  
+     *
+     * @var \News\Model\NewsAdministration
      */
     protected $model;
 
     /**
      * News id
+     *
      * @var integer
      */
     protected $newsId;
 
     /**
      * News image
+     *
      * @var string
      */
     protected $newsImage;
 
     /**
      * Form elements
+     *
      * @var array
      */
     protected $formElements = [
@@ -165,7 +191,7 @@ class News extends ApplicationAbstractCustomForm
     /**
      * Get form instance
      *
-     * @return object
+     * @return \Application\Form\ApplicationCustomFormBuilder
      */
     public function getForm()
     {
@@ -194,7 +220,7 @@ class News extends ApplicationAbstractCustomForm
             if ($this->newsImage) {
                 $this->formElements['image']['extra_options']['preview'] = true;
                 $this->formElements['image']['extra_options']['file_url'] =
-                        ApplicationService::getResourcesUrl() . NewsBaseModel::getThumbnailsDir() . $this->newsImage;
+                        ApplicationService::getResourcesUrl() . NewsAdministrationModel::getThumbnailsDir() . $this->newsImage;
             }
 
             $this->form = new ApplicationCustomFormBuilder($this->formName,
@@ -205,14 +231,15 @@ class News extends ApplicationAbstractCustomForm
     }
 
     /**
-     * Set an news image
+     * Set an image
      *
      * @param string $newsImage
-     * @return object fluent interface
+     * @return \News\Form\News
      */
     public function setNewsImage($newsImage)
     {
         $this->newsImage = $newsImage;
+
         return $this;
     }
 
@@ -229,26 +256,28 @@ class News extends ApplicationAbstractCustomForm
     }
 
     /**
-     * Set a model
+     * Set model
      *
-     * @param object $model
-     * @return object fluent interface
+     * @param \News\Model\NewsAdministration $model
+     * @return \News\Form\News
      */
     public function setModel(NewsAdministrationModel $model)
     {
         $this->model = $model;
+
         return $this;
     }
 
     /**
-     * Set a news id
+     * Set id
      *
      * @param integer $newsId
-     * @return object fluent interface
+     * @return \News\Form\News
      */
     public function setNewsId($newsId)
     {
         $this->newsId = $newsId;
+
         return $this;
     }
 }
