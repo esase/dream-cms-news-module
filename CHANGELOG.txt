@@ -1,0 +1,4 @@
+News 1.0.8, Sep 18, 2015
+====================================
+
+- added a license info into each file;

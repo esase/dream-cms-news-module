@@ -1,4 +1,25 @@
 <?php
+
+/**
+ * EXHIBIT A. Common Public Attribution License Version 1.0
+ * The contents of this file are subject to the Common Public Attribution License Version 1.0 (the “License”);
+ * you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ * http://www.dream-cms.kg/en/license. The License is based on the Mozilla Public License Version 1.1
+ * but Sections 14 and 15 have been added to cover use of software over a computer network and provide for
+ * limited attribution for the Original Developer. In addition, Exhibit A has been modified to be consistent
+ * with Exhibit B. Software distributed under the License is distributed on an “AS IS” basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the specific language
+ * governing rights and limitations under the License. The Original Code is Dream CMS software.
+ * The Initial Developer of the Original Code is Dream CMS (http://www.dream-cms.kg).
+ * All portions of the code written by Dream CMS are Copyright (c) 2014. All Rights Reserved.
+ * EXHIBIT B. Attribution Information
+ * Attribution Copyright Notice: Copyright 2014 Dream CMS. All rights reserved.
+ * Attribution Phrase (not exceeding 10 words): Powered by Dream CMS software
+ * Attribution URL: http://www.dream-cms.kg/
+ * Graphic Image as provided in the Covered Code.
+ * Display of Attribution Information is required in Larger Works which are defined in the CPAL as a work
+ * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
+ */
 namespace News\Model;
 
 use Application\Utility\ApplicationSlug as SlugUtility;
@@ -14,12 +35,12 @@ use Exception;
 class NewsBase extends ApplicationAbstractBase
 {
     /**
-     * News slug lengh
+     * News slug length
      */
     const NEWS_SLUG_LENGTH = 80;
 
     /**
-     * News category slug lengh
+     * News category slug length
      */
     const NEWS_CATEGORY_SLUG_LENGTH = 80;
 
@@ -35,24 +56,28 @@ class NewsBase extends ApplicationAbstractBase
 
     /**
      * Images directory
+     *
      * @var string
      */
     protected static $imagesDir = 'news/';
 
     /**
      * Thumbnails directory
+     *
      * @var string
      */
     protected static $thumbnailsDir = 'news/thumbnail/';
 
     /**
      * News info
+     *
      * @var array
      */
     protected static $newsInfo = [];
 
     /**
      * All categories
+     *
      * @var array
      */
     protected static $allCategories = null;
@@ -140,7 +165,7 @@ class NewsBase extends ApplicationAbstractBase
      * 
      * @param string $language
      * @param boolean $active
-     * @return object ResultSet
+     * @return \Zend\Db\ResultSet\ResultSet
      */
     public function getAllNews($language = null, $active = false)
     {
@@ -196,7 +221,7 @@ class NewsBase extends ApplicationAbstractBase
      *      string language
      *      array categories
      *      string date_edited
-     * @throws News/Exception/NewsException
+     * @throws \News\Exception\NewsException
      * @return boolean|string
      */
     public function deleteNews(array $newsInfo)
@@ -347,6 +372,7 @@ class NewsBase extends ApplicationAbstractBase
         }
 
         self::$newsInfo[$memoryKey] = $news;
+
         return $news;
     }
 
@@ -360,13 +386,13 @@ class NewsBase extends ApplicationAbstractBase
      * @param integer $slugLength
      * @param array $filters
      * @param string $slugField
-     * @param string $spaceDevider
+     * @param string $spaceDivider
      * @return string
      */
-    public function generateSlug($objectId, $title, $table, $idField, $slugLength = 60, array $filters = [], $slugField = 'slug', $spaceDevider = '-')
+    public function generateSlug($objectId, $title, $table, $idField, $slugLength = 60, array $filters = [], $slugField = 'slug', $spaceDivider = '-')
     {
         // generate a slug
-        $newSlug  = $slug = SlugUtility::slugify($title, $slugLength, $spaceDevider);
+        $newSlug  = $slug = SlugUtility::slugify($title, $slugLength, $spaceDivider);
         $slagSalt = null;
 
         while (true) {
@@ -394,11 +420,11 @@ class NewsBase extends ApplicationAbstractBase
                 break;
             }
             else {
-                $newSlug = $objectId . $spaceDevider . $slug . $slagSalt;
+                $newSlug = $objectId . $spaceDivider . $slug . $slagSalt;
             }
 
             // add an extra slug
-            $slagSalt = $spaceDevider . SlugUtility::generateRandomSlug($this->slugLength); // add a salt
+            $slagSalt = $spaceDivider . SlugUtility::generateRandomSlug($this->slugLength); // add a salt
         }
 
         return $newSlug;
