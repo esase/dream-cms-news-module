@@ -39,7 +39,8 @@ class NewsSimilarNewsWidget extends NewsAbstractWidget
             return $this->getView()->partial('news/widget/limited-list-news', [
                 'all_news_link' => (int) $this->getWidgetSetting('news_all_link_similar_news'),
                 'show_thumbnails' => (int) $this->getWidgetSetting('news_thumbnails_similar_news'),
-                'list_news' => $similarNews
+                'list_news' => $similarNews,
+                'show_link' => $this->getView()->pageUrl('news', [], null, true)
             ]);
         }
 

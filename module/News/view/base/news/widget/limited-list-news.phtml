@@ -1,7 +1,7 @@
 <?php $this->declareVars('newsListUrl') ?>
 
 <?php foreach ($this->list_news as $news): ?>
-    <?php echo $this->partial('news/partial/_news-unit', 
+    <?php echo $this->partial('news/partial/_news-unit',
             array_merge(['data' => $news], ['show_thumbnails' => $this->show_thumbnails, 'show_link' => $this->show_link])) ?>
 <?php endforeach ?>
 
