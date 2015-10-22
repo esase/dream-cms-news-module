@@ -80,6 +80,10 @@ class NewsCategory extends ApplicationAbstractCustomForm
             'max_length' => self::SLUG_MAX_LENGTH,
             'description' => 'The display name will be displayed in the browser bar'
         ],
+        'csrf' => [
+            'name' => 'csrf',
+            'type' => ApplicationCustomFormBuilder::FIELD_CSRF
+        ],
         'submit' => [
             'name' => 'submit',
             'type' => ApplicationCustomFormBuilder::FIELD_SUBMIT,

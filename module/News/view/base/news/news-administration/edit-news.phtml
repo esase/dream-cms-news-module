@@ -39,7 +39,7 @@
         'name' => $this->translate('Delete the news'),
         'check_acl' => true,
         'confirm' => $this->translate('News will be deleted. Are you sure?'),
-        'confirm_callback' => "function(link) { $.post($(link).attr('href'), {'news' : [{$this->news['id']}]}, function(){location.href='{$this->url('application/page', ['controller' => 'news-administration', 'action' => 'list'], ['force_canonical' => true])}'}) }"
+        'confirm_callback' => "function(link) { $.post($(link).attr('href'), {'csrf' : '{$this->csrf_token}', 'news' : [{$this->news['id']}]}, function(){location.href='{$this->url('application/page', ['controller' => 'news-administration', 'action' => 'list'], ['force_canonical' => true])}'}) }"
     ],
     [
         'hide_action' => NewsBaseModel::STATUS_APPROVED == $this->news['status'],
@@ -48,7 +48,7 @@
         'name' => $this->translate('Approve the news'),
         'check_acl' => true,
         'confirm' => $this->translate('News will be approved. Are you sure?'),
-        'confirm_callback' => "function(link) { $.post($(link).attr('href'), {'news' : [{$this->news['id']}]}, function(){location.href='{$this->url('application/page', ['controller' => 'news-administration', 'action' => 'edit-news', 'slug' => $this->news['id']], ['force_canonical' => true])}'}) }"
+        'confirm_callback' => "function(link) { $.post($(link).attr('href'), {'csrf' : '{$this->csrf_token}', 'news' : [{$this->news['id']}]}, function(){location.href='{$this->url('application/page', ['controller' => 'news-administration', 'action' => 'edit-news', 'slug' => $this->news['id']], ['force_canonical' => true])}'}) }"
     ],
     [
         'hide_action' => NewsBaseModel::STATUS_APPROVED != $this->news['status'],
@@ -57,7 +57,7 @@
         'name' => $this->translate('Disapprove the news'),
         'check_acl' => true,
         'confirm' => $this->translate('News will be disapproved. Are you sure?'),
-        'confirm_callback' => "function(link) { $.post($(link).attr('href'), {'news' : [{$this->news['id']}]}, function(){location.href='{$this->url('application/page', ['controller' => 'news-administration', 'action' => 'edit-news', 'slug' => $this->news['id']], ['force_canonical' => true])}'}) }"
+        'confirm_callback' => "function(link) { $.post($(link).attr('href'), {'csrf' : '{$this->csrf_token}', 'news' : [{$this->news['id']}]}, function(){location.href='{$this->url('application/page', ['controller' => 'news-administration', 'action' => 'edit-news', 'slug' => $this->news['id']], ['force_canonical' => true])}'}) }"
     ],
     [
         'controller' => 'news-administration',

@@ -68,7 +68,9 @@ class NewsAdministrationController extends ApplicationAbstractAdministrationCont
     {
         $request = $this->getRequest();
 
-        if ($request->isPost()) {
+        if ($request->isPost() &&
+                $this->applicationCsrf()->isTokenValid($request->getPost('csrf'))) {
+
             if (null !== ($newsIds = $request->getPost('news', null))) {
                 // approve selected news
                 $approveResult = false;
@@ -126,7 +128,9 @@ class NewsAdministrationController extends ApplicationAbstractAdministrationCont
     {
         $request = $this->getRequest();
 
-        if ($request->isPost()) {
+        if ($request->isPost() &&
+                $this->applicationCsrf()->isTokenValid($request->getPost('csrf'))) {
+
             if (null !== ($newsIds = $request->getPost('news', null))) {
                 // disapprove selected news
                 $disapproveResult = false;
@@ -348,7 +352,9 @@ class NewsAdministrationController extends ApplicationAbstractAdministrationCont
     {
         $request = $this->getRequest();
 
-        if ($request->isPost()) {
+        if ($request->isPost() &&
+                $this->applicationCsrf()->isTokenValid($request->getPost('csrf'))) {
+
             if (null !== ($categoriesIds = $request->getPost('categories', null))) {
                 // delete selected categories
                 $deleteResult = false;
@@ -451,6 +457,7 @@ class NewsAdministrationController extends ApplicationAbstractAdministrationCont
         }
 
         return new ViewModel([
+            'csrf_token' => $this->applicationCsrf()->getToken(),
             'category' => $category,
             'category_form' => $categoryForm->getForm()
         ]);
@@ -525,6 +532,7 @@ class NewsAdministrationController extends ApplicationAbstractAdministrationCont
         }
 
         return new ViewModel([
+            'csrf_token' => $this->applicationCsrf()->getToken(),
             'news_form' => $newsForm->getForm(),
             'news' => $news
         ]);
@@ -537,7 +545,9 @@ class NewsAdministrationController extends ApplicationAbstractAdministrationCont
     {
         $request = $this->getRequest();
 
-        if ($request->isPost()) {
+        if ($request->isPost() &&
+                $this->applicationCsrf()->isTokenValid($request->getPost('csrf'))) {
+
             if (null !== ($newsIds = $request->getPost('news', null))) {
                 // delete selected news
                 $deleteResult = false;
