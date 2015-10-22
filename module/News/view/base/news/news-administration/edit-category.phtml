@@ -37,7 +37,7 @@
         'name' => $this->translate('Delete the category'),
         'check_acl' => true,
         'confirm' => $this->translate('Category will be deleted. Are you sure?'),
-        'confirm_callback' => "function(link) { $.post($(link).attr('href'), {'categories' : [{$this->category['id']}]}, function(){location.href='{$this->url('application/page', ['controller' => 'news-administration', 'action' => 'list-categories'], ['force_canonical' => true])}'}) }"
+        'confirm_callback' => "function(link) { $.post($(link).attr('href'), {'csrf' : '{$this->csrf_token}', 'categories' : [{$this->category['id']}]}, function(){location.href='{$this->url('application/page', ['controller' => 'news-administration', 'action' => 'list-categories'], ['force_canonical' => true])}'}) }"
     ],
     [
         'controller' => 'news-administration',
