@@ -22,7 +22,7 @@
  */
 return [
     'compatable' => '2.3.2',
-    'version' => '1.0.8',
+    'version' => '1.0.9',
     'vendor' => 'eSASe',
     'vendor_email' => 'alexermashev@gmail.com',
     'description' => 'Module allows to publish news on the site',

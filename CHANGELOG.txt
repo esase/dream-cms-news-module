@@ -1,3 +1,9 @@
+News 1.0.9, Oct 22, 2015
+====================================
+
+- security added csrf tokens in all forms and post requests;
+- fixed links in the similar news widget;
+
 News 1.0.8, Sep 18, 2015
 ====================================
 
